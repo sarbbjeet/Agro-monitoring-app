@@ -12,32 +12,19 @@ import {
 import {DrawerActions} from '@react-navigation/native';
 import {moderateScale, verticalScale} from '../Scaling';
 import {navheaderFont} from '../constants/theme';
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import {
+  faArrowRightFromBracket,
+  faGear,
+  faHome,
+} from '@fortawesome/free-solid-svg-icons';
+import {faContactBook} from '@fortawesome/free-regular-svg-icons';
 const farmer = {
   name: 'sarbjit singh ',
   id: 'a9902',
 };
-const menuRoutes = [
-  {
-    id: 1,
-    title: 'Home',
-    route: 'dHome',
-    icon: 'home',
-  },
-  {
-    id: 2,
-    title: 'Configure Gateway',
-    route: 'dSettings',
-    icon: 'setting',
-  },
-  {
-    id: 3,
-    title: 'About',
-    route: 'dAbout',
-    icon: 'contacts',
-  },
-];
 
-const Item = ({title, route, navigation, icon}) => {
+const Item = ({route, navigation, children}) => {
   const [event, setEvent] = useState(false);
   return (
     <TouchableOpacity
@@ -49,13 +36,7 @@ const Item = ({title, route, navigation, icon}) => {
         navigation.dispatch(DrawerActions.toggleDrawer());
         navigation.navigate(route);
       }}>
-      {/* <AntDesign
-        name={icon}
-        size={moderateScale(22)}
-        color="black"
-        style={{ paddingHorizontal: 5 }}
-      /> */}
-      <Text style={styles.drawerItemText}> {title} </Text>
+      {children}
     </TouchableOpacity>
   );
 };
@@ -67,12 +48,11 @@ const AppButton = ({title = 'button', onPress, icon}) => {
         ...styles.listItem,
       }}
       onPress={onPress}>
-      {/* <AntDesign
-        name={icon}
+      <FontAwesomeIcon
+        icon={faArrowRightFromBracket}
         size={moderateScale(22)}
-        color="black"
-        style={{paddingHorizontal: 5}}
-      /> */}
+        style={{marginRight: moderateScale(10)}}
+      />
       <Text style={styles.drawerItemText}> {title} </Text>
     </TouchableOpacity>
   );
@@ -98,22 +78,41 @@ export default function CustomDrawer(props) {
           className=""
           style={{
             ...styles.text,
-            fontSize: moderateScale(22),
-            fontFamily: 'BalooBhai_semibold',
-            textTransform: 'capitalize',
-            padding: moderateScale(5),
+            ...styles.headerName,
           }}>
           {farmer.name}
         </Text>
       </View>
       <View style={{flex: 7}}>
         <ScrollView style={{width: '100%', marginTop: 4}}>
-          {menuRoutes.map(({id, title, route, icon}) => (
-            <View key={id}>
-              <Item title={title} route={route} {...props} icon={icon} />
-              <View style={styles.divider} />
-            </View>
-          ))}
+          <Item title="Home" route="dHome" {...props}>
+            <FontAwesomeIcon
+              icon={faHome}
+              size={moderateScale(22)}
+              style={{marginRight: moderateScale(10)}}
+            />
+            <Text style={styles.drawerItemText}> Home </Text>
+          </Item>
+          <View style={styles.divider} />
+          <Item title="Settings" route="dSettings" {...props}>
+            <FontAwesomeIcon
+              icon={faGear}
+              size={moderateScale(22)}
+              style={{marginRight: moderateScale(10)}}
+            />
+            <Text style={styles.drawerItemText}> Gateway Settings </Text>
+          </Item>
+          <View style={styles.divider} />
+          <Item title="About" route="dAbout" {...props}>
+            <FontAwesomeIcon
+              icon={faContactBook}
+              size={moderateScale(22)}
+              style={{marginRight: moderateScale(10)}}
+            />
+            <Text style={styles.drawerItemText}> About </Text>
+          </Item>
+          <View style={styles.divider} />
+
           <AppButton title="Logout" icon="logout" />
         </ScrollView>
       </View>
@@ -134,6 +133,12 @@ const styles = StyleSheet.create({
     letterSpacing: 1.2,
     color: '#fff',
   },
+  headerName: {
+    fontSize: moderateScale(20),
+    fontFamily: 'BalooBhai2-Bold',
+    textTransform: 'capitalize',
+    padding: moderateScale(5),
+  },
   Container: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -146,8 +151,8 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
   },
   drawerItemText: {
-    fontSize: moderateScale(16),
-    fontFamily: 'Poppins_semibold',
+    fontSize: moderateScale(14),
+    fontFamily: 'Poppins-SemiBold',
   },
 
   listItem: {
@@ -172,7 +177,7 @@ const styles = StyleSheet.create({
   },
   footerTag: {
     color: '#FDFFE2',
-    fontFamily: 'BalooBhai_regular',
+    fontFamily: 'BalooBhai2-Regular',
     fontSize: moderateScale(18),
   },
 });
