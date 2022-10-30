@@ -1,0 +1,7 @@
+{
+    "name": "wifi_scanner",
+    "displayName": "wifi_scanner",
+    "expo": {
+        "plugins": ["react-native-wifi-reborn"]
+    }
+}
