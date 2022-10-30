@@ -5,22 +5,22 @@ import {
   StyleSheet,
   Dimensions,
   ScrollView,
-} from "react-native";
-import React from "react";
-import { moderateScale } from "../Scaling";
-import RoundIndicator from "./RoundIndicator";
-import { colors } from "../constants/colors";
-import Sprinkler from "./Sprinkler";
-import { fieldTypes } from "../constants/fieldTypes";
-import { useEffect } from "react";
+} from 'react-native';
+import React from 'react';
+import {moderateScale} from '../Scaling';
+import RoundIndicator from './RoundIndicator';
+import {colors} from '../constants/colors';
+import Sprinkler from './Sprinkler';
+import {fieldTypes} from '../constants/fieldTypes';
+import {useEffect} from 'react';
 
 const field = {
-  name: "wheat Field",
-  addr: "mamumajra, ts1 4lz",
+  name: 'wheat Field',
+  addr: 'mamumajra, ts1 4lz',
 };
 export default function Dashboard({
-  title = "field_title",
-  addr = "address",
+  title = 'field_title',
+  addr = 'address',
   field_id = 1,
   temerature = 10.5,
   moisture = 20,
@@ -28,13 +28,12 @@ export default function Dashboard({
   numberOfDashboard = 1,
   sprinklerEvent, //method
 }) {
-  const width = Dimensions.get("window").width;
-  const height = Dimensions.get("window").height;
+  const width = Dimensions.get('window').width;
+  const height = Dimensions.get('window').height;
   return (
     <ScrollView
       className="overflow-scroll"
-      style={{ maxHeight: height - moderateScale(150) }}
-    >
+      style={{maxHeight: height - moderateScale(150)}}>
       <View
         className={`border-gray-300 border rounded-t-2xl shadow bg-gray-50
       }`}
@@ -42,15 +41,14 @@ export default function Dashboard({
           width:
             width -
             (numberOfDashboard == 1 ? moderateScale(20) : moderateScale(35)),
-          overflow: "scroll",
-        }}
-      >
+          overflow: 'scroll',
+        }}>
         <View>
           <Image
             style={styles.bannerImage}
             className="rounded-t-xl"
             source={
-              fieldTypes?.find((field) => field.id == field_id)?.image ||
+              fieldTypes?.find(field => field.id == field_id)?.image ||
               fieldTypes[0]?.image
             }
           />
@@ -79,7 +77,7 @@ export default function Dashboard({
           <View className="flex items-center">
             <Sprinkler
               powerStatus={sprinklerStatus}
-              onClick={() => console.log("click me")}
+              onClick={() => console.log('click me')}
             />
           </View>
         </View>
@@ -90,22 +88,22 @@ export default function Dashboard({
 
 const styles = StyleSheet.create({
   bannerImage: {
-    width: "100%",
+    width: '100%',
     height: moderateScale(150),
-    resizeMode: "stretch",
+    resizeMode: 'stretch',
   },
   text: {
-    fontFamily: "BalooBhai_bold",
+    fontFamily: 'BalooBhai2-Bold',
   },
   headerText: {
-    fontFamily: "BalooBhai_bold",
-    textTransform: "capitalize",
+    fontFamily: 'BalooBhai2-Bold',
+    textTransform: 'capitalize',
     fontSize: moderateScale(20),
     // backgroundColor: "red",
-    alignItems: "center",
+    alignItems: 'center',
   },
   subHeaderText: {
-    fontFamily: "BalooBhai_regular",
+    fontFamily: 'BalooBhai2-Regular',
     fontSize: moderateScale(18),
     lineHeight: 26,
   },

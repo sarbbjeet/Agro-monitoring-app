@@ -7,7 +7,7 @@ export default function Home() {
   return (
     // <View className="flex-1">
     <View className="mx-2 mt-6">
-      <Text className="font-bold text-gray-700" style={styles.fontFamily}>
+      <Text className="text-gray-700" style={styles.fontFamily}>
         Dashboard
       </Text>
       <View style={styles.divider} />
@@ -25,7 +25,7 @@ export default function Home() {
 }
 const styles = StyleSheet.create({
   fontFamily: {
-    fontFamily: 'BalooBhai_bold',
+    fontFamily: 'BalooBhai2-Bold',
     fontSize: moderateScale(22),
   },
   divider: {

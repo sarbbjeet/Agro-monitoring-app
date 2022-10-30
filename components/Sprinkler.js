@@ -5,12 +5,12 @@ import {
   StyleSheet,
   Button,
   TouchableOpacity,
-} from "react-native";
-import React, { useState } from "react";
-import { moderateScale } from "../Scaling";
-import { colors } from "../constants/colors";
+} from 'react-native';
+import React, {useState} from 'react';
+import {moderateScale} from '../Scaling';
+import {colors} from '../constants/colors';
 
-export default function Sprinkler({ powerStatus = false, onClick }) {
+export default function Sprinkler({powerStatus = false, onClick}) {
   //   const [pStatus, setStatus] = useState(powerStatus);
   return (
     <View className="w-36 shadow pb-2">
@@ -18,14 +18,13 @@ export default function Sprinkler({ powerStatus = false, onClick }) {
       <TouchableOpacity
         onPress={onClick}
         className={`bg-white p-1 rounded-2xl shadow-lg shadow-black-200 border-2 ${
-          powerStatus ? "border-red-500" : "border-pink-100"
-        }  `}
-      >
+          powerStatus ? 'border-red-500' : 'border-pink-100'
+        }  `}>
         <Image
           source={
             powerStatus
-              ? require("../resources/sprinkler_on.png")
-              : require("../resources/sprinkler_off.png")
+              ? require('../resources/sprinkler_on.png')
+              : require('../resources/sprinkler_off.png')
           }
           style={styles.imageStyle}
         />
@@ -33,9 +32,8 @@ export default function Sprinkler({ powerStatus = false, onClick }) {
           style={{
             ...styles.status,
             color: powerStatus ? colors.sprinker_on : colors.sprinker_off,
-          }}
-        >
-          {powerStatus ? "Power on" : "Power off"}
+          }}>
+          {powerStatus ? 'Power on' : 'Power off'}
         </Text>
       </TouchableOpacity>
     </View>
@@ -43,24 +41,24 @@ export default function Sprinkler({ powerStatus = false, onClick }) {
 }
 const styles = StyleSheet.create({
   title: {
-    fontFamily: "Poppins_semibold",
+    fontFamily: 'Poppins-SemiBold',
     fontSize: moderateScale(14),
     color: colors.dark_text,
-    textAlign: "center",
+    textAlign: 'center',
     paddingVertical: 5,
   },
   status: {
-    fontFamily: "BalooBhai_semibold",
+    fontFamily: 'BalooBhai2-SemiBold',
     fontSize: moderateScale(16),
-    position: "absolute",
+    position: 'absolute',
     bottom: 0,
-    width: "100%",
+    width: '100%',
     // color: "red",
-    textAlign: "center",
+    textAlign: 'center',
     marginLeft: 3,
     // left: "25%",
   },
   imageStyle: {
-    width: "100%",
+    width: '100%',
   },
 });
