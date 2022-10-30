@@ -7,6 +7,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 
 import WifiManager from 'react-native-wifi-reborn';
 import {faHourglass} from '@fortawesome/free-regular-svg-icons';
+import MQTTContext from './context/MQTTContext';
 
 // WifiManager.connectToProtectedSSID(ssid, password, isWep).then(
 //   () => {
@@ -34,7 +35,7 @@ export default function App() {
     <View>
       <Text>app</Text>
       {/* <Icon name="house" type="font-awesome" size={32} color="#000" /> */}
-
+      <MQTTContext></MQTTContext>
       <FontAwesomeIcon icon={faHourglass} size={50} color={'green'} />
     </View>
   );
