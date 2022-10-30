@@ -13,12 +13,7 @@ module.exports = {
         allowUndefined: true,
       },
     ],
-    // [
-    //   'module-resolver',
-    //   {
-    //     extensions: ['.tsx', '.ts', '.js', '.json'],
-    //   },
-    // ],
+    'nativewind/babel',
     'react-native-reanimated/plugin',
   ],
 };
