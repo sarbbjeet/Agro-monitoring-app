@@ -29,11 +29,12 @@ WifiManager.getCurrentWifiSSID().then(
 WifiManager.loadWifiList().then(val => {
   console.log(val);
 });
-
 export default function App() {
   return (
     <View>
-      <Text>app</Text>
+      <Text style={{fontSize: 30, fontFamily: 'BalooBhai2-Bold'}}>
+        this is my app
+      </Text>
       {/* <Icon name="house" type="font-awesome" size={32} color="#000" /> */}
       <MQTTContext></MQTTContext>
       <FontAwesomeIcon icon={faHourglass} size={50} color={'green'} />
