@@ -1,11 +1,22 @@
 import {View, Text, StyleSheet, ScrollView} from 'react-native';
-import React from 'react';
+import React, {useContext} from 'react';
 import Dashboard from '../components/Dashboard';
 import {moderateScale} from '../Scaling';
-
+import {UserContext} from '../context/MQTTContext';
+const dd = {
+  title: 'sarb',
+  addr: 'this is my app',
+};
 export default function Home() {
+  const {client, connected} = useContext(UserContext);
+  if (client) {
+    console.log(client);
+    // client.subscribe('/data');
+    client.on('message', function (msg) {
+      console.log('my message-->', msg);
+    });
+  }
   return (
-    // <View className="flex-1">
     <View className="mx-2 mt-6">
       <Text className="text-gray-700" style={styles.fontFamily}>
         Dashboard
@@ -13,14 +24,13 @@ export default function Home() {
       <View style={styles.divider} />
       <ScrollView horizontal className="mt-4 flex h-full" pagingEnabled>
         <View className="mr-2">
-          <Dashboard />
+          <Dashboard {...dd} />
         </View>
-        <View>
+        {/* <View>
           <Dashboard />
-        </View>
+        </View> */}
       </ScrollView>
     </View>
-    // </View>
   );
 }
 const styles = StyleSheet.create({

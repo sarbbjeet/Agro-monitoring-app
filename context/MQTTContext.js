@@ -21,25 +21,33 @@ export default function MQTTContext({children}) {
       })
         .then(_client => {
           setConnectionState({...connectionState, client: _client});
+          console.log('d1 -> ', _client);
           _client.connect();
           _client.on('connect', function () {
             console.log('connected');
+            _client.subscribe('/outTopic/7890', 0);
             setConnectionState({...connectionState, connected: true});
           });
-
           _client.on('closed', function () {
             setConnectionState({...connectionState, connected: false});
             console.log('mqtt.event.closed');
+            //reconnect request
+            _client.connect();
           });
           _client.on('error', function (msg) {
             setConnectionState({...connectionState, connected: false});
             console.log('mqtt.event.error', msg);
+            //reconnect request
+            _client.connect();
           });
         })
         .catch(err => {
           console.log(err);
         });
-    connectToMqtt();
+    if (!connectionState.client) connectToMqtt();
+    return () => {
+      connectionState.client?.unsubscribe('/outTopic/7890');
+    };
   }, []);
   return (
     <UserContext.Provider value={connectionState}>
