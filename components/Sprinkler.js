@@ -18,11 +18,11 @@ export default function Sprinkler({powerStatus = false, onClick}) {
       <TouchableOpacity
         onPress={onClick}
         className={`bg-white p-1 rounded-2xl shadow-lg shadow-black-200 border-2 ${
-          powerStatus ? 'border-red-500' : 'border-pink-100'
+          !powerStatus ? 'border-red-500' : 'border-pink-100'
         }  `}>
         <Image
           source={
-            powerStatus
+            !powerStatus
               ? require('../resources/sprinkler_on.png')
               : require('../resources/sprinkler_off.png')
           }
@@ -31,9 +31,9 @@ export default function Sprinkler({powerStatus = false, onClick}) {
         <Text
           style={{
             ...styles.status,
-            color: powerStatus ? colors.sprinker_on : colors.sprinker_off,
+            color: !powerStatus ? colors.sprinker_on : colors.sprinker_off,
           }}>
-          {powerStatus ? 'Power on' : 'Power off'}
+          {!powerStatus ? 'Power on' : 'Power off'}
         </Text>
       </TouchableOpacity>
     </View>

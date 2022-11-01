@@ -75,10 +75,7 @@ export default function Dashboard({
             />
           </View>
           <View className="flex items-center">
-            <Sprinkler
-              powerStatus={sprinklerStatus}
-              onClick={() => console.log('click me')}
-            />
+            <Sprinkler powerStatus={sprinklerStatus} onClick={sprinklerEvent} />
           </View>
         </View>
       </View>
