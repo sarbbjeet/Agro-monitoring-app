@@ -1,9 +1,15 @@
-import {View, Text, StyleSheet, ScrollView} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
 import React, {useState} from 'react';
 import {colors} from '../constants/colors';
 import {moderateScale} from '../Scaling';
 
-export default function WifiScanning({wifiList}) {
+export default function WifiScanning({wifiList, clickEvent}) {
   const [loading, setLoading] = useState(true);
 
   const startLoading = () => {
@@ -29,11 +35,14 @@ export default function WifiScanning({wifiList}) {
         </View>
       ) : (
         <View className="h-full">
-          {wifiList.map(wifi => (
-            <View style={styles.wrapper}>
+          {wifiList.map((wifi, i) => (
+            <TouchableOpacity
+              key={i}
+              style={styles.wrapper}
+              onPress={() => clickEvent(i)}>
               <Text style={styles.ssid}>{wifi?.ssid}</Text>
               <Text style={styles.mac}>{wifi?.mac}</Text>
-            </View>
+            </TouchableOpacity>
           ))}
         </View>
       )}

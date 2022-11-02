@@ -1,6 +1,7 @@
 import {View, Text} from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import WifiScanning from '../components/WifiScanning';
+import SSIDAuthenticateModel from '../components/SSIDAuthenticateModel';
 
 const wifiList = [
   {
@@ -63,9 +64,27 @@ const wifiList = [
   },
 ];
 export default function Settings() {
+  const [openModel, setOpenModel] = useState(true);
+  const [selectedWifi, setSelectedWifi] = useState({ssid: '', pass: ''});
   return (
     <View>
-      <WifiScanning wifiList={wifiList} />
+      <WifiScanning
+        wifiList={wifiList}
+        clickEvent={index => {
+          setSelectedWifi({...selectedWifi, ssid: wifiList[index]?.ssid});
+          setOpenModel(true);
+        }}
+      />
+      {openModel && (
+        <SSIDAuthenticateModel
+          wifi={selectedWifi}
+          okEvent={pass => {
+            setSelectedWifi({...selectedWifi, pass});
+            setOpenModel(false);
+          }}
+          cancelEvent={() => setOpenModel(false)}
+        />
+      )}
     </View>
   );
 }
