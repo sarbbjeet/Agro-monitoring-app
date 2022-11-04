@@ -1,10 +1,16 @@
 package com.wifi_scanner;
 
+import com.facebook.react.HeadlessJsTaskService;
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.ReactRootView;
-import com.reactlibrary.rnwifi.RNWifiPackage;
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.jstasks.HeadlessJsTaskConfig;
+
+import android.content.Intent;
 import android.os.Bundle;
+
+import androidx.annotation.Nullable;
 
 public class MainActivity extends ReactActivity {
 
@@ -51,5 +57,23 @@ protected void onCreate(Bundle savedInstanceState) {
       // More on this on https://reactjs.org/blog/2022/03/29/react-v18.html
       return BuildConfig.IS_NEW_ARCHITECTURE_ENABLED;
     }
+  }
+
+  public static class BroadcastHeadless extends HeadlessJsTaskService {
+
+      @Override
+      protected @Nullable
+      HeadlessJsTaskConfig getTaskConfig(Intent intent) {
+          Bundle extras = intent.getExtras();
+          if (extras != null) {
+              return new HeadlessJsTaskConfig(
+                      "broadcastEvent",
+                      Arguments.fromBundle(extras),
+                      5000, // timeout for the task
+                      true // optional: defines whether or not  the task is allowed in foreground. Default is false
+              );
+          }
+          return null;
+      }
   }
 }

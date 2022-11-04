@@ -1,5 +1,5 @@
-import {View, Text, StyleSheet, ScrollView} from 'react-native';
-import React, {useContext, useRef, useState} from 'react';
+import {View, Text, StyleSheet, ScrollView, AppRegistry} from 'react-native';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import Dashboard from '../components/Dashboard';
 import {moderateScale} from '../Scaling';
 import {UserContext} from '../context/MQTTContext';
@@ -7,7 +7,12 @@ const dd = {
   title: 'sarb',
   addr: 'this is my app',
 };
+
+const broadcastEvent = async data => {
+  console.log('listener -->', data);
+};
 export default function Home() {
+  const [headless, setHeadless] = useState(false);
   const [data, setData] = useState({
     title: 'Potato Field',
     addr: 'middlesbrough, TS1 78L',
@@ -35,6 +40,13 @@ export default function Home() {
       }
     });
   }
+
+  useEffect(() => {
+    if (!headless) {
+      setHeadless(true);
+      AppRegistry.registerHeadlessTask('broadcastEvent', () => broadcastEvent);
+    }
+  }, []);
   return (
     <View className="mx-2 mt-6">
       <Text className="text-gray-700" style={styles.fontFamily}>

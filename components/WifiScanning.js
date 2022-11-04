@@ -10,15 +10,6 @@ import {colors} from '../constants/colors';
 import {moderateScale} from '../Scaling';
 
 export default function WifiScanning({wifiList, clickEvent}) {
-  const [loading, setLoading] = useState(true);
-
-  const startLoading = () => {
-    setLoading(true);
-  };
-  const stopLoading = () => {
-    setLoading(false);
-  };
-
   return (
     <ScrollView>
       {/* {loading ? (
@@ -40,8 +31,8 @@ export default function WifiScanning({wifiList, clickEvent}) {
               key={i}
               style={styles.wrapper}
               onPress={() => clickEvent(i)}>
-              <Text style={styles.ssid}>{wifi?.ssid}</Text>
-              <Text style={styles.mac}>{wifi?.mac}</Text>
+              <Text style={styles.ssid}>{wifi?.SSID}</Text>
+              <Text style={styles.mac}>{wifi?.BSSID}</Text>
             </TouchableOpacity>
           ))}
         </View>

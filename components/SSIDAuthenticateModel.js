@@ -12,7 +12,7 @@ export default function SSIDAuthenticateModel({
 }) {
   const [pass, setPass] = useState('');
   return (
-    <View className="absolute flex h-full w-full bg-transparent pt-20 items-center">
+    <View className="absolute flex h-full w-full bg-transparent pt-20 items-center z-10">
       <View style={styles.container} className="rounded-md">
         <View style={styles.header}>
           <Text style={styles.headerText}>gateway authentication</Text>
@@ -45,6 +45,7 @@ export default function SSIDAuthenticateModel({
 const styles = StyleSheet.create({
   container: {
     width: '95%',
+    height: moderateScale(200),
     backgroundColor: 'white',
     borderColor: '#bbb',
     borderWidth: 1,
