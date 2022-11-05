@@ -12,11 +12,13 @@ import React, {useContext, useEffect, useState} from 'react';
 import WifiManager from 'react-native-wifi-reborn';
 
 import WifiScanning from '../components/WifiScanning';
-import SSIDAuthenticateModel from '../components/SSIDAuthenticateModel';
+import SSIDAuthenticateModel from '../model/SSIDAuthenticateModel';
 import * as permissions from 'react-native-permissions';
 // you may also import just the functions or constants that you will use from this library
 import {request, PERMISSIONS} from 'react-native-permissions';
 import {UserContext} from '../context/WIFIGPSContext';
+import GpsSelectModel from '../model/GpsModel';
+import WifiGPSEnable from '../components/WifiGPSEnable';
 // import DeviceInfo from 'react-native-device-info';
 
 export default function Settings({navigation}) {
@@ -24,7 +26,6 @@ export default function Settings({navigation}) {
   const [openModel, setOpenModel] = useState(false);
   const [refreshing, setRefreshing] = React.useState(false);
   const [selectedWifi, setSelectedWifi] = useState({ssid: '', pass: ''});
-  const {wifi, gps} = useContext(UserContext); //get wifi and gps state of the device
 
   const grantedLocationPermissions = async cb => {
     if (Platform.OS === 'android') {
@@ -65,21 +66,14 @@ export default function Settings({navigation}) {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', async () => {
-      console.log('wifi is =', wifi);
-      console.log('gps is =', gps);
       grantedLocationPermissions(async granted => {
         if (granted) {
           try {
-            //ConnectivityStatus.toggleGpsButton();
-            // await Linking.sendIntent('android.settings.WIFI_SETTINGS');
-            // await Linking.sendIntent(
-            //   'android.settings.LOCATION_SOURCE_SETTINGS',
-            // );
             const list = await WifiManager.loadWifiList();
+            setWifiList(list);
             console.log(list);
           } catch (err) {
             console.log(err.message);
-            // Linking.openSettings();
           }
         } else {
           console.log('location access permission is not granted');
@@ -101,30 +95,32 @@ export default function Settings({navigation}) {
     wait(2000).then(() => setRefreshing(false));
   }, []);
   return (
-    <ScrollView
-      contentContainerStyle={{flexGrow: 1}}
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }>
-      <WifiScanning
-        wifiList={wifiList}
-        clickEvent={index => {
-          setSelectedWifi({...selectedWifi, ssid: wifiList[index]?.SSID});
-          console.log('click  me ');
-          setOpenModel(true);
-        }}
-      />
-      {openModel && (
-        <SSIDAuthenticateModel
-          wifi={selectedWifi}
-          okEvent={pass => {
-            setSelectedWifi({...selectedWifi, pass});
-            setOpenModel(false);
+    <WifiGPSEnable>
+      <ScrollView
+        contentContainerStyle={{flexGrow: 1}}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }>
+        <WifiScanning
+          wifiList={wifiList}
+          clickEvent={index => {
+            setSelectedWifi({...selectedWifi, ssid: wifiList[index]?.SSID});
+            console.log('click  me ');
+            setOpenModel(true);
           }}
-          cancelEvent={() => setOpenModel(false)}
         />
-      )}
-      {/* </View> */}
-    </ScrollView>
+        {openModel && (
+          <SSIDAuthenticateModel
+            wifi={selectedWifi}
+            okEvent={pass => {
+              setSelectedWifi({...selectedWifi, pass});
+              setOpenModel(false);
+            }}
+            cancelEvent={() => setOpenModel(false)}
+          />
+        )}
+        {/* </View> */}
+      </ScrollView>
+    </WifiGPSEnable>
   );
 }

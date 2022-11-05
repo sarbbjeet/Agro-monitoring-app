@@ -1,41 +1,26 @@
-import {View, Text, StyleSheet, TextInput} from 'react-native';
+import {View, Text, StyleSheet, TextInput, Linking} from 'react-native';
 import React, {useState} from 'react';
 import {colors} from '../constants/colors';
 import {moderateScale} from '../Scaling';
 import {Button} from 'react-native-elements';
-import Btn from './Btn';
+import Btn from '../components/Btn';
 
-export default function SSIDAuthenticateModel({
-  wifi = {ssid: 'nokia'},
-  cancelEvent,
-  okEvent,
-}) {
-  const [pass, setPass] = useState('');
+export default function WIFIModel({ok, cancel}) {
   return (
-    <View className="absolute flex h-full w-full bg-transparent pt-20 items-center z-10">
+    <View className="absolute flex h-full w-full bg-transparent justify-center pb-40 items-center z-10">
       <View style={styles.container} className="rounded-md">
-        <View style={styles.header}>
-          <Text style={styles.headerText}>gateway authentication</Text>
+        <View style={styles.header} className="bg-blue-500">
+          <Text style={styles.headerText}>WIFI Connectivity</Text>
         </View>
         <View className="flex flex-row mt-2 mx-2 items-center">
-          <Text className="font-bold text-md mr-1">SSID: </Text>
-          <Text className="border border-gray-100 p-1 text-md bg-slate-200">
-            {wifi?.ssid}
+          <Text className="text-md mr-1">
+            Device should be connected with the
+            <Text className="font-bold"> gateway A</Text> access point.
           </Text>
         </View>
-        <View className="flex flex-row mx-2 items-center">
-          <Text className="font-bold text-md mr-1">PASS:</Text>
-          <TextInput
-            textContentType="password"
-            secureTextEntry={false}
-            value={pass}
-            onChangeText={d => setPass(d)}
-            className="border border-gray-400 w-5/6 rounded p-1"
-          />
-        </View>
         <View style={styles.btnGroup}>
-          <Btn onClick={cancelEvent}>cancel</Btn>
-          <Btn onClick={() => okEvent(pass)}>ok</Btn>
+          <Btn onClick={cancel}>cancel</Btn>
+          <Btn onClick={ok}>ok</Btn>
         </View>
       </View>
     </View>
@@ -45,10 +30,10 @@ export default function SSIDAuthenticateModel({
 const styles = StyleSheet.create({
   container: {
     width: '95%',
-    height: moderateScale(200),
+    height: moderateScale(150),
     backgroundColor: 'white',
-    borderColor: '#bbb',
-    borderWidth: 1,
+    //borderColor: '#bbb',
+    // borderWidth: 1,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -60,7 +45,7 @@ const styles = StyleSheet.create({
   },
   header: {
     width: '100%',
-    backgroundColor: colors.primary,
+    // backgroundColor: '#0077aa',
     height: 40,
     display: 'flex',
     justifyContent: 'center',
