@@ -8,6 +8,12 @@ import {
 import React, {useState} from 'react';
 import {colors} from '../constants/colors';
 import {moderateScale} from '../Scaling';
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import {
+  faArrowAltCircleDown,
+  faArrowAltCircleUp,
+  faHome,
+} from '@fortawesome/free-solid-svg-icons';
 
 export default function WifiScanning({wifiList, clickEvent}) {
   return (
@@ -16,12 +22,17 @@ export default function WifiScanning({wifiList, clickEvent}) {
         <Text>Scanning ....</Text>
       ) : (
         <> */}
-      {!(wifiList.length > 0) ? (
+      {!wifiList.length > 0 ? (
         <View className="flex h-full justify-center items-center">
           <Text
-            className="text-zinc-700 font-semibold text-lg"
+            className="text-zinc-700 font-semibold text-lg px-2 mt-2"
             style={{fontFamily: 'BalooBhai2-Regular'}}>
-            no wifi access point found
+            no wifi access point found, pull down{' '}
+            <FontAwesomeIcon
+              icon={faArrowAltCircleDown}
+              size={moderateScale(22)}
+            />{' '}
+            to load wifi list
           </Text>
         </View>
       ) : (

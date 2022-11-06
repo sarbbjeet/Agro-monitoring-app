@@ -65,18 +65,20 @@ export default function Settings({navigation}) {
   };
 
   useEffect(() => {
+    //check when user click on side navigation
     const unsubscribe = navigation.addListener('focus', async () => {
       grantedLocationPermissions(async granted => {
         if (granted) {
           try {
             const list = await WifiManager.loadWifiList();
+            // const ssid = await WifiManager.getCurrentWifiSSID();
             setWifiList(list);
-            console.log(list);
           } catch (err) {
             console.log(err.message);
           }
         } else {
-          console.log('location access permission is not granted');
+          alert('location access permission is not granted');
+          // console.log('location access permission is not granted');
         }
       });
     });
@@ -119,7 +121,6 @@ export default function Settings({navigation}) {
             cancelEvent={() => setOpenModel(false)}
           />
         )}
-        {/* </View> */}
       </ScrollView>
     </WifiGPSEnable>
   );
