@@ -14,7 +14,7 @@ const wifiSetting = () => Linking.sendIntent('android.settings.WIFI_SETTINGS');
 //open app settings selection options
 const appSettings = () => Linking.openSettings();
 
-export default function WifiGPSEnable({children, gatewaySSID = 'VM9929625'}) {
+export default function WifiGPSEnable({children, gatewaySSID = 'agri_wifi'}) {
   const {wifi, gps} = useContext(UserContext); //get wifi and gps state of the device
   const [ssid, setSSID] = useState('');
   const loadCurrentSSID = async () => {

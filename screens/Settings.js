@@ -19,13 +19,19 @@ import {request, PERMISSIONS} from 'react-native-permissions';
 import {UserContext} from '../context/WIFIGPSContext';
 import GpsSelectModel from '../model/GpsModel';
 import WifiGPSEnable from '../components/WifiGPSEnable';
+import axios from 'axios';
 // import DeviceInfo from 'react-native-device-info';
 
 export default function Settings({navigation}) {
   const [wifiList, setWifiList] = useState([]);
+  const [startRequest, setStartRequest] = useState(false);
   const [openModel, setOpenModel] = useState(false);
   const [refreshing, setRefreshing] = React.useState(false);
-  const [selectedWifi, setSelectedWifi] = useState({ssid: '', pass: ''});
+  const [selectedWifi, setSelectedWifi] = useState({
+    ssid: '',
+    pass: '',
+    user_id: '7890',
+  });
 
   const grantedLocationPermissions = async cb => {
     if (Platform.OS === 'android') {
@@ -65,6 +71,25 @@ export default function Settings({navigation}) {
   };
 
   useEffect(() => {
+    const asyncLoop = async () => {
+      try {
+        if (startRequest) {
+          //post request
+          const res = await axios('http://192.168.4.1/', {
+            method: 'POST',
+            data: selectedWifi,
+          });
+          setStartRequest(false);
+          console.log('response->', res?.data);
+        }
+      } catch (err) {
+        console.log('error->', err?.message);
+      }
+    };
+    asyncLoop();
+  }, [startRequest]);
+
+  useEffect(() => {
     //check when user click on side navigation
     const unsubscribe = navigation.addListener('focus', async () => {
       grantedLocationPermissions(async granted => {
@@ -96,6 +121,7 @@ export default function Settings({navigation}) {
     });
     wait(2000).then(() => setRefreshing(false));
   }, []);
+
   return (
     <WifiGPSEnable>
       <ScrollView
@@ -116,6 +142,8 @@ export default function Settings({navigation}) {
             wifi={selectedWifi}
             okEvent={pass => {
               setSelectedWifi({...selectedWifi, pass});
+              //http post request
+              setStartRequest(true);
               setOpenModel(false);
             }}
             cancelEvent={() => setOpenModel(false)}

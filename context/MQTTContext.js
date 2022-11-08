@@ -20,31 +20,46 @@ export default function MQTTContext({children}) {
         auth: true,
       })
         .then(_client => {
-          setConnectionState({...connectionState, client: _client});
-          console.log('d1 -> ', _client);
-          _client.connect();
-          _client.on('connect', function () {
+          //   setConnectionState({...connectionState, client: _client});
+          setConnectionState(currentState => ({
+            ...currentState,
+            client: _client,
+          }));
+          _client?.connect();
+          _client?.on('connect', function () {
             console.log('connected');
-            _client.subscribe('/outTopic/7890', 0);
-            setConnectionState({...connectionState, connected: true});
+            _client?.subscribe('/outTopic/7890', 0);
+            setConnectionState(currentState => ({
+              ...currentState,
+              connected: true,
+            }));
           });
-          _client.on('closed', function () {
-            setConnectionState({...connectionState, connected: false});
+          _client?.on('closed', function () {
+            setConnectionState(currentState => ({
+              ...currentState,
+              connected: false,
+            }));
             console.log('mqtt.event.closed');
             //reconnect request
-            _client.connect();
+            // _client.connect();
           });
-          _client.on('error', function (msg) {
-            setConnectionState({...connectionState, connected: false});
+          _client?.on('error', function (msg) {
+            setConnectionState(currentState => ({
+              ...currentState,
+              connected: false,
+            }));
             console.log('mqtt.event.error', msg);
             //reconnect request
-            _client.connect();
+            // _client.connect();
           });
         })
         .catch(err => {
-          console.log(err);
+          console.log('new error-->', err);
         });
-    if (!connectionState.client) connectToMqtt();
+    if (connectionState.client == null) {
+      console.log('cal me ........................................');
+      connectToMqtt();
+    }
     return () => {
       connectionState.client?.unsubscribe('/outTopic/7890');
     };

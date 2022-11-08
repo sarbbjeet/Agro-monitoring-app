@@ -22,24 +22,26 @@ export default function Home() {
   });
   const ref_client = useRef();
   const {client, connected} = useContext(UserContext);
-  if (client) {
-    ref_client.current = client;
-    // client.subscribe('/data');
-    client.on('message', async function (msg) {
-      try {
-        const obj = await JSON.parse(msg.data); // payload is a buffer
-        setData({
-          ...data,
-          temerature: obj?.data?.sensor1,
-          moisture: obj?.data?.sensor0,
-          sprinklerStatus: obj?.data?.relay0,
-        });
-        //console.log('my message-->', obj);
-      } catch (err) {
-        console.log(err);
-      }
-    });
-  }
+  useEffect(() => {
+    if (client != null) {
+      // console.log('client -> ', client);
+      ref_client.current = client;
+      client.on('message', async function (msg) {
+        try {
+          const obj = await JSON.parse(msg.data); // payload is a buffer
+          setData({
+            ...data,
+            temerature: obj?.data?.sensor1,
+            moisture: obj?.data?.sensor0,
+            sprinklerStatus: obj?.data?.relay0,
+          });
+          //console.log('my message-->', obj);
+        } catch (err) {
+          console.log(err);
+        }
+      });
+    }
+  }, [connected]);
 
   useEffect(() => {
     if (!headless) {
@@ -58,7 +60,7 @@ export default function Home() {
           <Dashboard
             {...data}
             sprinklerEvent={() => {
-              ref_client.current.publish(
+              ref_client?.current?.publish(
                 '/inTopic/7890',
                 JSON.stringify({
                   gateway: 170,
