@@ -5,6 +5,7 @@ const AuthContext = createContext({});
 import {REACT_APP_HOST} from '@env';
 
 const url = `${REACT_APP_HOST}/api/user/login`;
+const createUserUrl = `${REACT_APP_HOST}/api/user`;
 
 const getData = async key => {
   try {
@@ -43,6 +44,17 @@ export default function AuthProvider({children}) {
     }
     loadUserFromStore();
   }, []);
+
+  const register = async dataToSend => {
+    try {
+      const {data} = await axios.post(createUserUrl, dataToSend);
+      return {error: false, msg: 'register successfully'};
+    } catch (err) {
+      if (err?.response?.data?.error)
+        return {error: true, msg: err?.response?.data?.error};
+      return {error: true, msg: err?.message};
+    }
+  };
 
   const login = async ({email, password}) => {
     try {
@@ -89,6 +101,7 @@ export default function AuthProvider({children}) {
         login,
         loading,
         logout,
+        register,
         token: _token,
       }}>
       {children}

@@ -10,40 +10,74 @@ import {
 import React, {useState} from 'react';
 import Btn from './Btn';
 import {moderateScale} from '../Scaling';
+import {useAuth} from '../context/AuthProvider';
 
 export default function Register() {
   const [crediential, setCrediential] = useState({
-    first_name: '',
+    name: '',
     last_name: '',
     email: '',
     password: '',
-    country_code: '',
+    // country_code: '',
     phone: '',
     error: false,
     msg: '',
   });
-  const onSubmit = () => {
+  const {register} = useAuth();
+  const resetState = () => {
+    setCrediential(currentState => ({
+      ...currentState,
+      name: '',
+      last_name: '',
+      email: '',
+      password: '',
+      country_code: '',
+      phone: '',
+    }));
+  };
+  const onSubmit = async () => {
     //send login request ...
-    if (crediential?.email == '' || crediential?.password == '')
+    if (
+      crediential?.email == '' ||
+      crediential?.password == '' ||
+      crediential?.name == ''
+    )
       return setCrediential(currentState => ({
         ...currentState,
         error: true,
         msg: 'input should not be empty',
       }));
+    const sendCredential = {...crediential};
+    delete sendCredential?.msg;
+    delete sendCredential?.error;
+
+    const response = await register(sendCredential);
+    if (response?.error)
+      return setCrediential(currentState => ({
+        ...currentState,
+        error: true,
+        msg: response?.msg,
+      }));
+    setCrediential(currentState => ({
+      ...currentState,
+      error: false,
+      msg: 'successfully created user',
+    }));
+    resetState();
   };
 
   const onChange = ({name, value}) => {
     setCrediential(currentState => ({
       ...currentState,
-      [name]: value,
+      [name]: value.trim(),
       msg: '',
       error: false,
     }));
   };
   return (
     <ScrollView contentContainerStyle={{flexGrow: 1}}>
-      <View className="px-4 mt-20">
-        {crediential?.msg.length != '' && (
+      <View className="px-4 mt-10">
+        {crediential?.msg?.length != '' && (
           <Text
             style={{fontFamily: 'BalooBhai2-Medium'}}
             className={`text-base  rounded p-2 mb-2
@@ -62,8 +96,8 @@ export default function Register() {
           id="name"
           name="name"
           placeholder="First Name"
-          value={crediential?.first_name}
-          onChangeText={text => onChange({name: 'first_name', value: text})}
+          value={crediential?.name}
+          onChangeText={text => onChange({name: 'name', value: text})}
           className="border-2 p-2 rounded-lg border-red-300 my-2 text-base"
         />
         <TextInput
@@ -110,7 +144,7 @@ export default function Register() {
 
         <TouchableOpacity
           onPress={onSubmit}
-          className="bg-red-400 px-3 py-2 mt-12 rounded-xl">
+          className="bg-red-400 px-3 py-2 mt-10 rounded-xl">
           <Text style={styles.text}>SIGNUP</Text>
         </TouchableOpacity>
       </View>

@@ -67,7 +67,7 @@ export default function Login() {
   };
   return (
     <ScrollView contentContainerStyle={{flexGrow: 1}}>
-      <View className="px-4 mt-20">
+      <View className="px-4 mt-10">
         {crediential?.msg.length != '' && (
           <Text
             style={{fontFamily: 'BalooBhai2-Medium'}}
@@ -110,7 +110,7 @@ export default function Login() {
 
         <TouchableOpacity
           onPress={onSubmit}
-          className="bg-red-400 px-3 py-2 mt-12 rounded-xl">
+          className="bg-red-400 px-3 py-2 mt-8 rounded-xl">
           <Text style={styles.text}>LOGIN</Text>
         </TouchableOpacity>
       </View>
