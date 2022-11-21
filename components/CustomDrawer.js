@@ -19,6 +19,7 @@ import {
   faHome,
 } from '@fortawesome/free-solid-svg-icons';
 import {faContactBook} from '@fortawesome/free-regular-svg-icons';
+import {useAuth} from '../context/AuthProvider';
 const farmer = {
   name: 'sarbjit singh ',
   id: 'a9902',
@@ -59,6 +60,7 @@ const AppButton = ({title = 'button', onPress, icon}) => {
 };
 
 export default function CustomDrawer(props) {
+  const {logout} = useAuth();
   return (
     <View style={{flex: 1}}>
       <View
@@ -113,7 +115,7 @@ export default function CustomDrawer(props) {
           </Item>
           <View style={styles.divider} />
 
-          <AppButton title="Logout" icon="logout" />
+          <AppButton title="Logout" icon="logout" onPress={logout} />
         </ScrollView>
       </View>
       <View

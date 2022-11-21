@@ -1,10 +1,11 @@
 import {StatusBar} from 'react-native';
 import React from 'react';
 import WifiManager from 'react-native-wifi-reborn';
-import MQTTContext from './context/MQTTContext';
 import RootNavigationSatck from './navigator/RootNavigationSatck';
 import {colors} from './constants/colors';
 import WIFIGPSContext from './context/WIFIGPSContext';
+import MQTTProvider from './context/MQTTProvider';
+import AuthProvider from './context/AuthProvider';
 
 // WifiManager.connectToProtectedSSID(ssid, password, isWep).then(
 //   () => {
@@ -28,11 +29,13 @@ WifiManager.loadWifiList().then(val => {
 });
 export default function App() {
   return (
-    <MQTTContext>
-      <WIFIGPSContext>
-        <StatusBar backgroundColor={colors.primary} />
-        <RootNavigationSatck />
-      </WIFIGPSContext>
-    </MQTTContext>
+    <AuthProvider>
+      <MQTTProvider>
+        <WIFIGPSContext>
+          <StatusBar backgroundColor={colors.primary} />
+          <RootNavigationSatck />
+        </WIFIGPSContext>
+      </MQTTProvider>
+    </AuthProvider>
   );
 }

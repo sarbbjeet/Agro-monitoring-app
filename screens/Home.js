@@ -2,7 +2,7 @@ import {View, Text, StyleSheet, ScrollView, AppRegistry} from 'react-native';
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import Dashboard from '../components/Dashboard';
 import {moderateScale} from '../Scaling';
-import {UserContext} from '../context/MQTTContext';
+import {useMqtt} from '../context/MQTTProvider';
 const dd = {
   title: 'sarb',
   addr: 'this is my app',
@@ -21,27 +21,44 @@ export default function Home() {
     sprinklerStatus: false,
   });
   const ref_client = useRef();
-  const {client, connected} = useContext(UserContext);
+  // const {client, connected} = useContext(UserContext);
+  const {
+    finalData,
+    connectionState: {client, connected},
+  } = useMqtt();
+
   useEffect(() => {
     if (client != null) {
       // console.log('client -> ', client);
       ref_client.current = client;
-      client.on('message', async function (msg) {
-        try {
-          const obj = await JSON.parse(msg.data); // payload is a buffer
-          setData({
-            ...data,
-            temerature: obj?.data?.sensor1,
-            moisture: obj?.data?.sensor0,
-            sprinklerStatus: obj?.data?.relay0,
-          });
-          //console.log('my message-->', obj);
-        } catch (err) {
-          console.log(err);
-        }
-      });
     }
-  }, [connected]);
+  }, [client, connected]);
+
+  // useEffect(() => {
+  //   if (client != null) {
+  //     // console.log('client -> ', client);
+  //     ref_client.current = client;
+  //     client.on('message', async function (msg) {
+  //       try {
+  //         console.log('received dd....');
+  //         const obj = await JSON.parse(msg.data); // payload is a buffer
+  //         setData({
+  //           ...data,
+  //           temerature: obj?.data?.sensor1,
+  //           moisture: obj?.data?.sensor0,
+  //           sprinklerStatus: obj?.data?.relay0,
+  //         });
+  //         //console.log('my message-->', obj);
+  //       } catch (err) {
+  //         console.log(err);
+  //       }
+  //     });
+  //   }
+  // }, [connected]);
+
+  useEffect(() => {
+    console.log('final data', finalData);
+  }, [finalData]);
 
   useEffect(() => {
     if (!headless) {
@@ -79,9 +96,6 @@ export default function Home() {
             }}
           />
         </View>
-        {/* <View>
-          <Dashboard />
-        </View> */}
       </ScrollView>
     </View>
   );
