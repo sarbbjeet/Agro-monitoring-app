@@ -1,4 +1,11 @@
-import {View, Text, StyleSheet, ScrollView, AppRegistry} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  AppRegistry,
+  TouchableOpacity,
+} from 'react-native';
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import Dashboard from '../components/Dashboard';
 import {moderateScale} from '../Scaling';
@@ -11,7 +18,7 @@ const dd = {
 const broadcastEvent = async data => {
   console.log('listener -->', data);
 };
-export default function Home() {
+export default function Home({navigation}) {
   const [headless, setHeadless] = useState(false);
   const [data, setData] = useState({
     title: 'Potato Field',
@@ -60,6 +67,23 @@ export default function Home() {
     console.log('final data', finalData);
   }, [finalData]);
 
+  useEffect(() => {
+    navigation?.setOptions({
+      headerRight: () => (
+        <TouchableOpacity onPress={() => navigation?.navigate('dEditField')}>
+          <Text
+            style={{
+              color: 'white',
+              fontFamily: 'BalooBhai2-Bold',
+              fontSize: moderateScale(16),
+              marginRight: moderateScale(10),
+            }}>
+            Add Field
+          </Text>
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation]);
   useEffect(() => {
     if (!headless) {
       setHeadless(true);

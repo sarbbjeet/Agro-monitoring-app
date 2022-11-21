@@ -6,6 +6,10 @@ import Settings from '../screens/Settings';
 import CustomDrawer from '../components/CustomDrawer';
 import {moderateScale} from '../Scaling';
 import {navheaderFont} from '../constants/theme';
+import {Button, Text, TouchableOpacity, View} from 'react-native';
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import ScanningField from '../screens/ScanningField';
+import FieldSettings from '../screens/FieldSettings';
 
 const DrawerView = createDrawerNavigator();
 export default function AppDrawerNavigator() {
@@ -25,7 +29,9 @@ export default function AppDrawerNavigator() {
       <DrawerView.Screen
         name="dHome"
         component={Home}
-        options={{title: 'Home'}}
+        options={{
+          title: 'Home',
+        }}
       />
       <DrawerView.Screen
         name="dSettings"
@@ -39,6 +45,20 @@ export default function AppDrawerNavigator() {
         component={About}
         options={{
           title: 'About',
+        }}
+      />
+      <DrawerView.Screen
+        name="dScanField"
+        component={ScanningField}
+        options={{
+          title: 'Field Scanning',
+        }}
+      />
+      <DrawerView.Screen
+        name="dEditField"
+        component={FieldSettings}
+        options={{
+          title: 'Field Settings',
         }}
       />
     </DrawerView.Navigator>
