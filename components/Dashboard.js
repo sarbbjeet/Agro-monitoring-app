@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Dimensions,
   ScrollView,
+  TouchableOpacity,
 } from 'react-native';
 import React from 'react';
 import {moderateScale} from '../Scaling';
@@ -13,6 +14,9 @@ import {colors} from '../constants/colors';
 import Sprinkler from './Sprinkler';
 import {fieldTypes} from '../constants/fieldTypes';
 import {useEffect} from 'react';
+
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import {faEdit, faTrash} from '@fortawesome/free-solid-svg-icons';
 
 const field = {
   name: 'wheat Field',
@@ -43,7 +47,16 @@ export default function Dashboard({
             (numberOfDashboard == 1 ? moderateScale(20) : moderateScale(35)),
           overflow: 'scroll',
         }}>
-        <View>
+        <View className="relative">
+          <View className="absolute z-30 top-1 right-1 flex flex-row ">
+            <TouchableOpacity className="w-10 h-10 flex justify-center items-center bg-gray-700 rounded-l-md">
+              <FontAwesomeIcon icon={faEdit} size={22} color="white" />
+            </TouchableOpacity>
+            <View style={{backgroundColor: colors?.p3}} className="w-1" />
+            <TouchableOpacity className="w-10 h-10 flex justify-center items-center bg-gray-700 rounded-r-md">
+              <FontAwesomeIcon icon={faTrash} size={22} color="white" />
+            </TouchableOpacity>
+          </View>
           <Image
             style={styles.bannerImage}
             className="rounded-t-xl"

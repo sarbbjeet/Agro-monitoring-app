@@ -70,7 +70,7 @@ export default function Home({navigation}) {
   useEffect(() => {
     navigation?.setOptions({
       headerRight: () => (
-        <TouchableOpacity onPress={() => navigation?.navigate('dEditField')}>
+        <TouchableOpacity onPress={() => navigation?.navigate('dScanField')}>
           <Text
             style={{
               color: 'white',

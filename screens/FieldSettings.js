@@ -12,23 +12,33 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import {MultiSelect, Dropdown} from 'react-native-element-dropdown';
 import {moderateScale} from '../Scaling';
 import {navheaderFont} from '../constants/theme';
+import axios from 'axios';
+import {useAuth} from '../context/AuthProvider';
+import {REACT_APP_HOST} from '@env';
+const url = `${REACT_APP_HOST}/api/user/field`;
+const dropdown = [
+  {label: 'Potato Field', value: 0},
+  {label: 'Wheat Field', value: 1},
+  {label: 'Onion Field', value: 2},
+];
 
-export default function FieldSettings() {
+export default function FieldSettings({route, navigation}) {
+  const {item, update = false} = route.params;
+  const {user, isAuthenticated, token} = useAuth();
   const [state, setState] = useState({
-    field_type_id: 0,
-    addr: '',
-    gateway: 0,
-    node: 0,
-    min_moist: 0,
-    min_temp: 0,
-    max_temp: 0,
-    max_moist: 0,
-    moist_auto: false,
-    temp_auto: false,
-
-    error: false,
-    msg: '',
+    id: update ? item?.id : '',
+    field_type_id: item?.field_type_id != undefined ? item?.field_type_id : 0,
+    addr: item?.addr || '',
+    gateway: item?.gateway,
+    node: item?.node,
+    min_moist: item?.min_moist ? item?.min_moist : 0,
+    max_moist: item?.max_moist ? item?.max_moist : 0,
+    min_temp: item?.min_temp != undefined ? item?.min_temp : 0,
+    max_temp: item?.max_temp != undefined ? item?.max_temp : 0,
+    moist_auto: item?.moist_auto != undefined ? item?.moist_auto : false,
+    temp_auto: item?.temp_auto != undefined ? item?.temp_auto : false,
   });
+
   const onChange = ({name, value}) => {
     setState(currentState => ({
       ...currentState,
@@ -38,15 +48,59 @@ export default function FieldSettings() {
     }));
   };
 
-  const DATA = [
-    {label: 'Potato Field', value: '1'},
-    {label: 'Wheat Field', value: '2'},
-    {label: 'Onion Field', value: '3'},
-  ];
+  //add or update field to database
+  const onFieldToDB = async () => {
+    //post
+    const newField = {...state};
+    delete newField?.id;
+    delete newField?.error;
+    delete newField?.msg;
+    try {
+      let userID = isAuthenticated ? user?.id : '7890'; //set dafault id if your not authenticated
+      await axios(
+        `${url}?farmer_id=${userID}${update ? `&field_id=${state?.id}` : ''}`,
+        {
+          method: update ? 'PUT' : 'POST',
+          data: newField,
+          headers: {Authorization: `Bearer ${token}`},
+        },
+      );
+      setState(currentState => ({
+        ...currentState,
+        error: false,
+        msg: 'Successfully added field',
+      }));
+      //navigate to home
+      navigation?.navigate('dHome');
+    } catch (_err) {
+      if (_err?.response?.data?.error) {
+        const error = _err?.response?.data?.error;
+        return setState(currentState => ({
+          ...currentState,
+          error: true,
+          msg: error?.length > 200 ? `${error?.slice(0, 200)}` : error,
+        }));
+      }
+      setState(currentState => ({
+        ...currentState,
+        error: true,
+        msg: _err?.message,
+      }));
+    }
+  };
 
   return (
     <ScrollView contentContainerStyle={{flexGrow: 1}}>
       <View className="px-4 mt-5">
+        {/* feedback */}
+        {state?.msg && (
+          <View
+            className={`p-2 text-gray-500  ${
+              state?.error ? 'bg-red-300' : 'bg-green-200 '
+            }`}>
+            <Text className="m-0">{state?.msg}</Text>
+          </View>
+        )}
         <View>
           <Text className="text-lg" style={{fontFamily: 'BalooBhai2-SemiBold'}}>
             Field Type
@@ -57,11 +111,13 @@ export default function FieldSettings() {
             inputSearchStyle={styles.inputSearchStyle}
             iconStyle={styles.iconStyle}
             style={styles.dropdown}
-            data={DATA}
+            data={dropdown}
             labelField="label"
             valueField="value"
-            value={'3'}
-            onChange={item => console.log(item)}
+            value={state?.field_type_id}
+            onChange={item =>
+              onChange({name: 'field_type_id', value: item?.value})
+            }
             placeholder="Select Field Type"
           />
         </View>
@@ -81,8 +137,19 @@ export default function FieldSettings() {
           />
         </View>
 
-        <View className="border-2 border-[#ccc] shadow-lg p-2 my-4">
-          <Text className="text-base font-bold">
+        <View
+          className="border-2 border-[#ccc] shadow-inner p-2 my-4 rounded-sm"
+          style={{
+            shadowColor: 'green',
+            shadowOffset: {
+              width: 1,
+              height: 2,
+            },
+            shadowOpacity: 0.2,
+            shadowRadius: 2,
+            elevation: 1,
+          }}>
+          <Text className="text-lg" style={{fontFamily: 'BalooBhai2-SemiBold'}}>
             Moisture Sensor Threshold Values
           </Text>
           <View className="flex flex-row my-2">
@@ -98,7 +165,7 @@ export default function FieldSettings() {
                 name="min_moist"
                 placeholder="min"
                 keyboardType="numeric"
-                value={state?.min_moist}
+                value={state?.min_moist.toString()}
                 onChangeText={text =>
                   onChange({name: 'min_moist', value: text})
                 }
@@ -112,11 +179,13 @@ export default function FieldSettings() {
                 Max %
               </Text>
               <TextInput
-                style={{fontFamily: 'BalooBhai2-SemiBold'}}
+                style={{
+                  fontFamily: 'BalooBhai2-SemiBold',
+                }}
                 name="max_moist"
                 placeholder="max"
                 keyboardType="numeric"
-                value={state?.max_moist}
+                value={state?.max_moist.toString()}
                 onChangeText={text =>
                   onChange({name: 'max_moist', value: text})
                 }
@@ -137,7 +206,9 @@ export default function FieldSettings() {
               value={state?.moist_auto}
             />
 
-            <Text>
+            <Text
+              style={{fontFamily: 'BalooBhai2-Regular'}}
+              className="text-gray-900">
               Press to adjust the automatic sprinkler state based on the minimum
               and maximum moisture sensor threshold values.
             </Text>
@@ -145,10 +216,22 @@ export default function FieldSettings() {
         </View>
 
         <TouchableOpacity
-          //   onPress={onSubmit}
-          style={{backgroundColor: navheaderFont.backgroundColor}}
+          onPress={onFieldToDB}
+          style={{
+            backgroundColor: navheaderFont.backgroundColor,
+            shadowColor: 'green',
+            shadowOffset: {
+              width: 1,
+              height: 2,
+            },
+            shadowOpacity: 0.3,
+            shadowRadius: 1.41,
+            elevation: 10,
+          }}
           className="px-3 py-2 rounded-xl mt-8">
-          <Text style={styles.text}>Add Field </Text>
+          <Text style={styles.text}>
+            {update ? 'Update Field' : 'Add Field'}
+          </Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
