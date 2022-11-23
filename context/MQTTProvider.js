@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import MQTT from 'sp-react-native-mqtt';
 //read .env file
 import {REACT_APP_MQTTHOST, REACT_APP_MQTTUSER, REACT_APP_MQTTPASS} from '@env';
@@ -12,6 +12,13 @@ export default function MQTTProvider({children}) {
   });
   const [messages, setMessages] = React.useState({});
   const [finalData, setFinalData] = React.useState([]);
+  const ref_client = useRef();
+  useEffect(() => {
+    if (connectionState?.client != null) {
+      ref_client.current = connectionState?.client;
+    }
+  }, [connectionState?.connected]);
+
   useEffect(() => {
     const connectToMqtt = () =>
       MQTT.createClient({
@@ -118,8 +125,21 @@ export default function MQTTProvider({children}) {
     };
     filter();
   }, [messages]);
+
+  const publish_data = msg => {
+    try {
+      ref_client?.current?.publish(
+        '/inTopic/7890',
+        JSON.stringify(msg),
+        0,
+        false,
+      );
+    } catch (err) {
+      console.log('error to publish mqtt', err.message);
+    }
+  };
   return (
-    <MqttContext.Provider value={{connectionState, finalData}}>
+    <MqttContext.Provider value={{connectionState, finalData, publish_data}}>
       {children}
     </MqttContext.Provider>
   );

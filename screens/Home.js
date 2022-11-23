@@ -2,69 +2,77 @@ import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
   AppRegistry,
+  Dimensions,
   TouchableOpacity,
 } from 'react-native';
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import Dashboard from '../components/Dashboard';
 import {moderateScale} from '../Scaling';
 import {useMqtt} from '../context/MQTTProvider';
-const dd = {
-  title: 'sarb',
-  addr: 'this is my app',
-};
+import DeleteModel from '../components/DeleteModel';
+import {useRequest} from '../context/HttpRequestProvider';
+import {useAuth} from '../context/AuthProvider';
+import {faL} from '@fortawesome/free-solid-svg-icons';
+import CardCarousel from '../components/CardCarousel';
 
 const broadcastEvent = async data => {
   console.log('listener -->', data);
 };
 export default function Home({navigation}) {
   const [headless, setHeadless] = useState(false);
-  const [data, setData] = useState({
-    title: 'Potato Field',
-    addr: 'middlesbrough, TS1 78L',
-    temerature: 0,
-    moisture: 0,
-    sprinklerStatus: false,
-  });
   const ref_client = useRef();
-  // const {client, connected} = useContext(UserContext);
+  const initialModelValues = {
+    selectedItemID: '',
+    hidden: true,
+  };
+
+  const [deleteModelState, setDeleteModelState] = useState(initialModelValues);
+  const {user, loadUserFromDB} = useAuth();
+  const {deleteField} = useRequest(); //http request context provider
   const {
     finalData,
+    publish_data,
     connectionState: {client, connected},
   } = useMqtt();
 
+  //set dashboard props
+  const dash_props = f => ({
+    addr: f?.addr,
+    fId: f?.field_type_id,
+    data: getSensorValues({gateway: f.gateway, node: f.node}),
+    deleteBtn: () => {
+      setDeleteModelState({
+        hidden: false,
+        selectedItemID: f?.id,
+      });
+    },
+    sprinklerEvent: state =>
+      publish_data({
+        gateway: f?.gateway,
+        node: f?.node,
+        data: {
+          relay0: state,
+        },
+      }),
+  });
+
+  //to insert into dashboards
+  const getSensorValues = ({gateway, node}) => {
+    const matched = finalData.find(
+      d => d.gateway == gateway && d.node === node,
+    );
+    return matched?.data;
+  };
+
   useEffect(() => {
     if (client != null) {
-      // console.log('client -> ', client);
       ref_client.current = client;
     }
   }, [client, connected]);
 
-  // useEffect(() => {
-  //   if (client != null) {
-  //     // console.log('client -> ', client);
-  //     ref_client.current = client;
-  //     client.on('message', async function (msg) {
-  //       try {
-  //         console.log('received dd....');
-  //         const obj = await JSON.parse(msg.data); // payload is a buffer
-  //         setData({
-  //           ...data,
-  //           temerature: obj?.data?.sensor1,
-  //           moisture: obj?.data?.sensor0,
-  //           sprinklerStatus: obj?.data?.relay0,
-  //         });
-  //         //console.log('my message-->', obj);
-  //       } catch (err) {
-  //         console.log(err);
-  //       }
-  //     });
-  //   }
-  // }, [connected]);
-
   useEffect(() => {
-    console.log('final data', finalData);
+    console.log('finalData->', finalData);
   }, [finalData]);
 
   useEffect(() => {
@@ -90,37 +98,33 @@ export default function Home({navigation}) {
       AppRegistry.registerHeadlessTask('broadcastEvent', () => broadcastEvent);
     }
   }, []);
+
+  const width = Dimensions.get('window').width;
+  const height = Dimensions.get('window').height;
   return (
     <View className="mx-2 mt-6">
+      {/* take confirmation to delete field entry  */}
+      <DeleteModel
+        visible={!deleteModelState?.hidden}
+        cancelEvent={() =>
+          setDeleteModelState(currentState => ({...currentState, hidden: true}))
+        }
+        okEvent={() => {
+          deleteField(deleteModelState?.selectedItemID);
+          setDeleteModelState(initialModelValues); //reset model
+          //request for reload user data
+          loadUserFromDB();
+        }}
+      />
       <Text className="text-gray-700" style={styles.fontFamily}>
         Dashboard
       </Text>
       <View style={styles.divider} />
-      <ScrollView horizontal className="mt-4 flex h-full" pagingEnabled>
-        <View className="mr-2">
-          <Dashboard
-            {...data}
-            sprinklerEvent={() => {
-              ref_client?.current?.publish(
-                '/inTopic/7890',
-                JSON.stringify({
-                  gateway: 170,
-                  node: 187,
-                  deviceModel: 0,
-                  data: {
-                    sensor0: 16.35,
-                    sensor1: 91,
-                    relay0: data?.sprinklerStatus == 1 ? 0 : 1,
-                  },
-                }),
-                0,
-                false,
-              );
-              console.log('publish event');
-            }}
-          />
-        </View>
-      </ScrollView>
+      <CardCarousel
+        data={user?.fields}
+        component={field => (
+          <Dashboard {...dash_props(field)} />
+        )}></CardCarousel>
     </View>
   );
 }

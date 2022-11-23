@@ -6,6 +6,7 @@ import {colors} from './constants/colors';
 import WIFIGPSContext from './context/WIFIGPSContext';
 import MQTTProvider from './context/MQTTProvider';
 import AuthProvider from './context/AuthProvider';
+import HttpRequestProvider from './context/HttpRequestProvider';
 
 // WifiManager.connectToProtectedSSID(ssid, password, isWep).then(
 //   () => {
@@ -31,10 +32,12 @@ export default function App() {
   return (
     <AuthProvider>
       <MQTTProvider>
-        <WIFIGPSContext>
-          <StatusBar backgroundColor={colors.primary} />
-          <RootNavigationSatck />
-        </WIFIGPSContext>
+        <HttpRequestProvider>
+          <WIFIGPSContext>
+            <StatusBar backgroundColor={colors.primary} />
+            <RootNavigationSatck />
+          </WIFIGPSContext>
+        </HttpRequestProvider>
       </MQTTProvider>
     </AuthProvider>
   );

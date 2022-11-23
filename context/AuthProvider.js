@@ -25,24 +25,25 @@ export default function AuthProvider({children}) {
   const [loading, setLoading] = useState(true);
   const [_token, setToken] = useState('');
 
-  useEffect(() => {
-    async function loadUserFromStore() {
-      //const token = Cookies.get("authToken");
-      const token = await getData('@authToken');
-      if (token && token != '') {
-        console.log("Got a token in the cookies, let's see if it is valid");
-        // api.defaults.headers.Authorization = `Bearer ${token}`;
-        const {data: user} = await axios(url, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (user?.data) setUser(user?.data);
-        setToken(token);
-      }
-      setLoading(false);
+  const loadUserFromDB = async () => {
+    //const token = Cookies.get("authToken");
+    const token = await getData('@authToken');
+    if (token && token != '') {
+      console.log("Got a token in the cookies, let's see if it is valid");
+      // api.defaults.headers.Authorization = `Bearer ${token}`;
+      const {data: user} = await axios(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (user?.data) setUser(user?.data);
+      setToken(token);
     }
-    loadUserFromStore();
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    loadUserFromDB();
   }, []);
 
   const register = async dataToSend => {
@@ -72,6 +73,7 @@ export default function AuthProvider({children}) {
         },
       });
       if (user?.data) setUser(user?.data);
+      setToken(token?.data);
       return {error: false, msg: 'successfully login'};
     } catch (err) {
       if (err?.response?.data)
@@ -102,6 +104,7 @@ export default function AuthProvider({children}) {
         loading,
         logout,
         register,
+        loadUserFromDB,
         token: _token,
       }}>
       {children}

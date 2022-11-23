@@ -7,7 +7,7 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {MultiSelect, Dropdown} from 'react-native-element-dropdown';
 import {moderateScale} from '../Scaling';
@@ -15,6 +15,7 @@ import {navheaderFont} from '../constants/theme';
 import axios from 'axios';
 import {useAuth} from '../context/AuthProvider';
 import {REACT_APP_HOST} from '@env';
+import {useRequest} from '../context/HttpRequestProvider';
 const url = `${REACT_APP_HOST}/api/user/field`;
 const dropdown = [
   {label: 'Potato Field', value: 0},
@@ -24,20 +25,27 @@ const dropdown = [
 
 export default function FieldSettings({route, navigation}) {
   const {item, update = false} = route.params;
-  const {user, isAuthenticated, token} = useAuth();
-  const [state, setState] = useState({
-    id: update ? item?.id : '',
-    field_type_id: item?.field_type_id != undefined ? item?.field_type_id : 0,
-    addr: item?.addr || '',
-    gateway: item?.gateway,
-    node: item?.node,
-    min_moist: item?.min_moist ? item?.min_moist : 0,
-    max_moist: item?.max_moist ? item?.max_moist : 0,
-    min_temp: item?.min_temp != undefined ? item?.min_temp : 0,
-    max_temp: item?.max_temp != undefined ? item?.max_temp : 0,
-    moist_auto: item?.moist_auto != undefined ? item?.moist_auto : false,
-    temp_auto: item?.temp_auto != undefined ? item?.temp_auto : false,
-  });
+  const {loadUserFromDB} = useAuth();
+  const {addOrUpdateField} = useRequest();
+  const [state, setState] = useState({});
+
+  useEffect(() => {
+    setState({
+      id: update ? item?.id : '',
+      field_type_id: item?.field_type_id != undefined ? item?.field_type_id : 0,
+      addr: item?.addr || '',
+      gateway: item?.gateway,
+      node: item?.node,
+      min_moist: item?.min_moist ? item?.min_moist : 0,
+      max_moist: item?.max_moist ? item?.max_moist : 0,
+      min_temp: item?.min_temp != undefined ? item?.min_temp : 0,
+      max_temp: item?.max_temp != undefined ? item?.max_temp : 0,
+      moist_auto: item?.moist_auto != undefined ? item?.moist_auto : false,
+      temp_auto: item?.temp_auto != undefined ? item?.temp_auto : false,
+      msg: '',
+      error: false,
+    });
+  }, [item, update]);
 
   const onChange = ({name, value}) => {
     setState(currentState => ({
@@ -55,38 +63,18 @@ export default function FieldSettings({route, navigation}) {
     delete newField?.id;
     delete newField?.error;
     delete newField?.msg;
-    try {
-      let userID = isAuthenticated ? user?.id : '7890'; //set dafault id if your not authenticated
-      await axios(
-        `${url}?farmer_id=${userID}${update ? `&field_id=${state?.id}` : ''}`,
-        {
-          method: update ? 'PUT' : 'POST',
-          data: newField,
-          headers: {Authorization: `Bearer ${token}`},
-        },
-      );
-      setState(currentState => ({
-        ...currentState,
-        error: false,
-        msg: 'Successfully added field',
-      }));
-      //navigate to home
-      navigation?.navigate('dHome');
-    } catch (_err) {
-      if (_err?.response?.data?.error) {
-        const error = _err?.response?.data?.error;
-        return setState(currentState => ({
-          ...currentState,
-          error: true,
-          msg: error?.length > 200 ? `${error?.slice(0, 200)}` : error,
-        }));
-      }
-      setState(currentState => ({
+    const {error, msg} = await addOrUpdateField({update, newField});
+    if (error)
+      return setState(currentState => ({
         ...currentState,
         error: true,
-        msg: _err?.message,
+        msg: msg?.length > 200 ? `${msg?.slice(0, 200)}` : msg,
       }));
-    }
+    //reset state
+    setState(currentState => ({...currentState, error: false, msg}));
+    //reload user data
+    loadUserFromDB();
+    navigation?.navigate('dHome'); //navigate to home
   };
 
   return (
@@ -165,7 +153,7 @@ export default function FieldSettings({route, navigation}) {
                 name="min_moist"
                 placeholder="min"
                 keyboardType="numeric"
-                value={state?.min_moist.toString()}
+                value={state?.min_moist?.toString()}
                 onChangeText={text =>
                   onChange({name: 'min_moist', value: text})
                 }
@@ -185,7 +173,7 @@ export default function FieldSettings({route, navigation}) {
                 name="max_moist"
                 placeholder="max"
                 keyboardType="numeric"
-                value={state?.max_moist.toString()}
+                value={state?.max_moist?.toString()}
                 onChangeText={text =>
                   onChange({name: 'max_moist', value: text})
                 }
