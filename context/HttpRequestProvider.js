@@ -11,9 +11,11 @@ export default function HttpRequestProvider({children}) {
   const addOrUpdateField = async ({newField, update = false}) => {
     try {
       let userID = isAuthenticated ? user?.id : '7890'; //set dafault id if your not authenticated
+      const fieldId = newField?.id;
+      delete newField?.id;
       await axios(
         `${fieldUrl}?farmer_id=${userID}${
-          update ? `&field_id=${state?.id}` : ''
+          update ? `&field_id=${fieldId}` : ''
         }`,
         {
           method: update ? 'PUT' : 'POST',

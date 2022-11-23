@@ -39,10 +39,6 @@ export default function Home({navigation}) {
     selectedItemID: '',
     hidden: true,
   };
-  const [page, setPage] = useState({
-    totalPages: 0,
-    currentPage: 0,
-  });
 
   const [deleteModelState, setDeleteModelState] = useState(initialModelValues);
   const {user, loadUserFromDB} = useAuth();
@@ -53,15 +49,30 @@ export default function Home({navigation}) {
     connectionState: {client, connected},
   } = useMqtt();
 
+  const [page, setPage] = useState({
+    totalPages: user?.fields?.length || 1,
+    currentPage: 0,
+  });
+
   //set dashboard props
   const dash_props = f => ({
     addr: f?.addr,
     fId: f?.field_type_id,
     data: getSensorValues({gateway: f.gateway, node: f.node}),
+    isActive: !getSensorValues({gateway: f.gateway, node: f.node})
+      ? false
+      : true,
     deleteBtn: () => {
       setDeleteModelState({
         hidden: false,
         selectedItemID: f?.id,
+      });
+    },
+    editBtn: () => {
+      //console.log('edit...', f);
+      navigation?.navigate('dEditField', {
+        update: true,
+        item: f,
       });
     },
     sprinklerEvent: state =>

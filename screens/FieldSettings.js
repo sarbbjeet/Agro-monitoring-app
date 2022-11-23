@@ -60,7 +60,7 @@ export default function FieldSettings({route, navigation}) {
   const onFieldToDB = async () => {
     //post
     const newField = {...state};
-    delete newField?.id;
+    // delete newField?.id;
     delete newField?.error;
     delete newField?.msg;
     const {error, msg} = await addOrUpdateField({update, newField});

@@ -27,15 +27,23 @@ export default function ScanningField({navigation}) {
         </View>
       ) : (
         <>
-          {finalData.map((item, i) => (
-            <ListItem
-              onPress={() => navigateToSettings(item)}
-              key={i}
-              className="mx-1"
-              gateway={item?.gateway}
-              node={item?.node}
-            />
-          ))}
+          {finalData.map((item, i) => {
+            const matchedField = user?.fields.find(
+              field =>
+                field.gateway == item?.gateway && field?.node == item?.node,
+            );
+            return (
+              !matchedField && (
+                <ListItem
+                  onPress={() => navigateToSettings(item)}
+                  key={i}
+                  className="mx-1"
+                  gateway={item?.gateway}
+                  node={item?.node}
+                />
+              )
+            );
+          })}
         </>
       )}
     </ScrollView>

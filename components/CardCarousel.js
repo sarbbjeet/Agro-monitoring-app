@@ -9,9 +9,8 @@ import {
 } from 'react-native';
 import {useMqtt} from '../context/MQTTProvider';
 import {moderateScale} from '../Scaling';
-import Dashboard1 from './Dashboard';
 
-const OFFSET = 10;
+const OFFSET = 5;
 const ITEM_WIDTH = Dimensions.get('window').width - OFFSET * 2;
 const ITEM_HEIGHT = Dimensions.get('window').height - moderateScale(150);
 
@@ -41,10 +40,6 @@ export default function CardCarousel({data, component, onActivePage}) {
     publish_data,
     connectionState: {client, connected},
   } = useMqtt();
-
-  useEffect(() => {
-    console.log('scrolX', scrollX);
-  }, [scrollX]);
 
   //to insert into dashboards
   const getSensorValues = ({gateway, node}) => {

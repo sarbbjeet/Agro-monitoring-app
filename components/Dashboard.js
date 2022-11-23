@@ -6,6 +6,7 @@ import {
   Dimensions,
   ScrollView,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import React from 'react';
 import {moderateScale} from '../Scaling';
@@ -27,17 +28,31 @@ export default function Dashboard({
   addr = '7 tennyson street',
   sprinklerEvent, //method
   deleteBtn,
+  editBtn,
+  isActive = false,
 }) {
   return (
-    <ScrollView className="overflow-scroll">
+    <ScrollView className="overflow-scroll w-[96%]">
       <View
-        className={`border-gray-300 border rounded-t-2xl shadow bg-gray-50`}
+        className={`border-gray-300 border rounded-t-2xl shadow bg-gray-50 relative`}
         style={{
           overflow: 'scroll',
         }}>
+        {!isActive && (
+          <View className="absolute z-20 flex w-full justify-center items-center h-full bg-[#0f0d0c6f]">
+            <ActivityIndicator
+              size="large"
+              color="#00ff00"
+              className="-top-20"
+            />
+          </View>
+        )}
+
         <View className="relative">
           <View className="absolute z-30 top-1 left-1 flex flex-row ">
-            <TouchableOpacity className="w-10 h-10 flex justify-center items-center bg-gray-700 rounded-l-md">
+            <TouchableOpacity
+              onPress={editBtn}
+              className="w-10 h-10 flex justify-center items-center bg-gray-700 rounded-l-md">
               <FontAwesomeIcon icon={faEdit} size={22} color="white" />
             </TouchableOpacity>
             <View style={{backgroundColor: colors?.p3}} className="w-1" />
