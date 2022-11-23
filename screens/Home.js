@@ -3,10 +3,9 @@ import {
   Text,
   StyleSheet,
   AppRegistry,
-  Dimensions,
   TouchableOpacity,
 } from 'react-native';
-import React, {useContext, useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import Dashboard from '../components/Dashboard';
 import {moderateScale} from '../Scaling';
 import {useMqtt} from '../context/MQTTProvider';
@@ -19,6 +18,20 @@ import CardCarousel from '../components/CardCarousel';
 const broadcastEvent = async data => {
   console.log('listener -->', data);
 };
+
+const Header = ({title, pageTag}) => (
+  <>
+    <View className="flex flex-row items-center justify-between">
+      <Text className="text-gray-700" style={styles.fontFamily}>
+        {title}
+      </Text>
+      <Text className="text-lg" style={{fontFamily: 'BalooBhai2-SemiBold'}}>
+        {pageTag}
+      </Text>
+    </View>
+    <View style={styles.divider} />
+  </>
+);
 export default function Home({navigation}) {
   const [headless, setHeadless] = useState(false);
   const ref_client = useRef();
@@ -26,6 +39,10 @@ export default function Home({navigation}) {
     selectedItemID: '',
     hidden: true,
   };
+  const [page, setPage] = useState({
+    totalPages: 0,
+    currentPage: 0,
+  });
 
   const [deleteModelState, setDeleteModelState] = useState(initialModelValues);
   const {user, loadUserFromDB} = useAuth();
@@ -57,12 +74,33 @@ export default function Home({navigation}) {
       }),
   });
 
+  //set delete model props
+  const deleteModelProps = () => ({
+    cancelEvent: () =>
+      setDeleteModelState(currentState => ({...currentState, hidden: true})),
+
+    okEvent: () => {
+      deleteField(deleteModelState?.selectedItemID);
+      setDeleteModelState(initialModelValues); //reset model
+      loadUserFromDB(); //request for reload user data
+    },
+  });
+
   //to insert into dashboards
   const getSensorValues = ({gateway, node}) => {
     const matched = finalData.find(
       d => d.gateway == gateway && d.node === node,
     );
     return matched?.data;
+  };
+
+  //change page
+  const onChangePage = pageData => setPage(pageData);
+
+  //get page tag
+  const getPageTag = () => {
+    const {currentPage, totalPages} = page;
+    return `${currentPage + 1}/${totalPages}`;
   };
 
   useEffect(() => {
@@ -99,32 +137,19 @@ export default function Home({navigation}) {
     }
   }, []);
 
-  const width = Dimensions.get('window').width;
-  const height = Dimensions.get('window').height;
   return (
     <View className="mx-2 mt-6">
       {/* take confirmation to delete field entry  */}
       <DeleteModel
         visible={!deleteModelState?.hidden}
-        cancelEvent={() =>
-          setDeleteModelState(currentState => ({...currentState, hidden: true}))
-        }
-        okEvent={() => {
-          deleteField(deleteModelState?.selectedItemID);
-          setDeleteModelState(initialModelValues); //reset model
-          //request for reload user data
-          loadUserFromDB();
-        }}
+        {...deleteModelProps()}
       />
-      <Text className="text-gray-700" style={styles.fontFamily}>
-        Dashboard
-      </Text>
-      <View style={styles.divider} />
+      <Header title={'Dashboard'} pageTag={getPageTag()} />
       <CardCarousel
         data={user?.fields}
-        component={field => (
-          <Dashboard {...dash_props(field)} />
-        )}></CardCarousel>
+        onActivePage={onChangePage}
+        component={field => <Dashboard {...dash_props(field)} />}
+      />
     </View>
   );
 }

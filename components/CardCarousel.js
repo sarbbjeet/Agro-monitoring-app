@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   ScrollView,
   Animated,
@@ -34,13 +34,17 @@ const cards = [
   },
 ];
 
-export default function CardCarousel({data, component}) {
+export default function CardCarousel({data, component, onActivePage}) {
   const scrollX = React.useRef(new Animated.Value(0)).current;
   const {
     finalData,
     publish_data,
     connectionState: {client, connected},
   } = useMqtt();
+
+  useEffect(() => {
+    console.log('scrolX', scrollX);
+  }, [scrollX]);
 
   //to insert into dashboards
   const getSensorValues = ({gateway, node}) => {
@@ -58,6 +62,15 @@ export default function CardCarousel({data, component}) {
       showsHorizontalScrollIndicator={false}
       bounces={false}
       disableIntervalMomentum
+      onMomentumScrollEnd={({nativeEvent}) => {
+        const totalPages = data?.length;
+        const currentPage = Math.floor(
+          // (nativeEvent.contentOffset.x ) /   real formula
+          (nativeEvent.contentOffset.x + totalPages * 5) /
+            nativeEvent.layoutMeasurement.width,
+        );
+        onActivePage({totalPages, currentPage});
+      }}
       onScroll={Animated.event([{nativeEvent: {contentOffset: {x: scrollX}}}], {
         useNativeDriver: false,
       })}
@@ -91,20 +104,6 @@ export default function CardCarousel({data, component}) {
               transform: [{scale: translate}],
             }}>
             {component(f)}
-            {/* <Dashboard1
-              fId={f?.field_type_id}
-              addr={f?.addr}
-              data={getSensorValues({gateway: f.gateway, node: f.node})}
-               deleteBtn={() => {
-              //   setDeleteModelState({
-              //     hidden: false,
-              //     selectedItemID: f?.id,
-              //   });
-              // }}
-              // sprinklerEvent={() => {
-              //   publish_data({sprinklerStatus: data?.sprinklerStatus});
-              // }}
-               // />  */}
           </Animated.View>
         );
       })}
