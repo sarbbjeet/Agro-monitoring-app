@@ -58,6 +58,7 @@ export default function Home({navigation}) {
   const dash_props = f => ({
     addr: f?.addr,
     fId: f?.field_type_id,
+    moist_auto: f?.moist_auto, //Is  moist auto mode on ?
     data: getSensorValues({gateway: f.gateway, node: f.node}),
     isActive: !getSensorValues({gateway: f.gateway, node: f.node})
       ? false

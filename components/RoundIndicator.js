@@ -14,7 +14,7 @@ export default function RoundIndicator({
   isFloatValue = true,
 }) {
   return (
-    <View className="flex items-center px-4 py-2 border border-gray-300 rounded-3xl shadow">
+    <View className="flex items-center px-3 py-1 border border-gray-300 rounded-3xl shadow">
       <Text style={styles.titleText}>{title}</Text>
       <CircularProgress
         value={value}
@@ -23,7 +23,7 @@ export default function RoundIndicator({
         duration={700}
         progressValueFontSize={moderateScale(20)}
         valueSuffix={valueSuffix}
-        valueSuffixStyle={{marginLeft: 2}}
+        valueSuffixStyle={{marginLeft: 1}}
         // title="degree"
         progressValueColor={'#777'}
         // titleFontSize={16}
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-SemiBold',
     fontSize: moderateScale(14),
     color: colors.dark_text,
-    paddingVertical: moderateScale(5),
+    paddingVertical: moderateScale(3),
     paddingHorizontal: moderateScale(2),
   },
 });

@@ -10,13 +10,18 @@ import React, {useState} from 'react';
 import {moderateScale} from '../Scaling';
 import {colors} from '../constants/colors';
 
-export default function Sprinkler({powerStatus = false, onClick}) {
+export default function Sprinkler({
+  powerStatus = false,
+  onClick,
+  disabled = false,
+}) {
   //   const [pStatus, setStatus] = useState(powerStatus);
   return (
-    <View className="w-36 shadow pb-2">
+    <View className="w-40 shadow pb-2" style={{elevation: 5}}>
       <Text style={styles.title}>Sprinker</Text>
       <TouchableOpacity
         onPress={onClick}
+        disabled={disabled}
         className={`bg-white p-1 rounded-2xl shadow-lg shadow-black-200 border-2 ${
           !powerStatus ? 'border-red-500' : 'border-pink-100'
         }  `}>

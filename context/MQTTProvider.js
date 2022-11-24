@@ -2,6 +2,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import MQTT from 'sp-react-native-mqtt';
 //read .env file
 import {REACT_APP_MQTTHOST, REACT_APP_MQTTUSER, REACT_APP_MQTTPASS} from '@env';
+import {useAuth} from './AuthProvider';
 
 export const MqttContext = React.createContext(null);
 
@@ -13,6 +14,7 @@ export default function MQTTProvider({children}) {
   const [messages, setMessages] = React.useState({});
   const [finalData, setFinalData] = React.useState([]);
   const ref_client = useRef();
+  const {user} = useAuth();
   useEffect(() => {
     if (connectionState?.client != null) {
       ref_client.current = connectionState?.client;
@@ -37,7 +39,8 @@ export default function MQTTProvider({children}) {
           _client?.connect();
           _client?.on('connect', function () {
             console.log('connected');
-            _client?.subscribe('/outTopic/7890', 0);
+            console.log('user id', user?.id);
+            _client?.subscribe(`/outTopic/${user?.id}`, 0);
             setConnectionState(currentState => ({
               ...currentState,
               connected: true,
@@ -83,13 +86,13 @@ export default function MQTTProvider({children}) {
           console.log('new error-->', err);
         });
 
-    if (connectionState.client == null) {
-      connectToMqtt();
-    }
+    // if (connectionState.client == null) {
+    connectToMqtt();
+    // }
     return () => {
-      connectionState.client?.unsubscribe('/outTopic/7890');
+      connectionState.client?.unsubscribe(`/outTopic/${user?.id}`);
     };
-  }, []);
+  }, [user?.id]);
   //create timer
   useEffect(() => {
     const currentTime = Date.now().toString();
@@ -129,7 +132,7 @@ export default function MQTTProvider({children}) {
   const publish_data = msg => {
     try {
       ref_client?.current?.publish(
-        '/inTopic/7890',
+        `/inTopic/${user?.id}`,
         JSON.stringify(msg),
         0,
         false,

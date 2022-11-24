@@ -25,6 +25,7 @@ export default function Dashboard({
     relay0: 0,
   },
   fId = 0,
+  moist_auto = false,
   addr = '7 tennyson street',
   sprinklerEvent, //method
   deleteBtn,
@@ -94,11 +95,17 @@ export default function Dashboard({
               value={data?.sensor1}
             />
           </View>
-          <View className="flex items-center">
+          <View className="flex items-center flex-row px-3">
             <Sprinkler
-              powerStatus={data?.relay0}
+              disabled={moist_auto} //Is moist auto on?
+              powerStatus={!data?.relay0}
               onClick={() => sprinklerEvent(!data?.relay0)}
             />
+            {moist_auto && (
+              <Text className="mt-2 ml-1" style={styles.text}>
+                (un-clickable)
+              </Text>
+            )}
           </View>
         </View>
       </View>
