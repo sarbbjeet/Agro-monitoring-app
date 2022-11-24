@@ -14,6 +14,7 @@ import {useRequest} from '../context/HttpRequestProvider';
 import {useAuth} from '../context/AuthProvider';
 import {faL} from '@fortawesome/free-solid-svg-icons';
 import CardCarousel from '../components/CardCarousel';
+import PullDownRefresh from '../components/PullDownRefresh';
 
 const broadcastEvent = async data => {
   console.log('listener -->', data);
@@ -32,6 +33,7 @@ const Header = ({title, pageTag}) => (
     <View style={styles.divider} />
   </>
 );
+
 export default function Home({navigation}) {
   const [headless, setHeadless] = useState(false);
   const ref_client = useRef();
@@ -156,12 +158,14 @@ export default function Home({navigation}) {
         visible={!deleteModelState?.hidden}
         {...deleteModelProps()}
       />
-      <Header title={'Dashboard'} pageTag={getPageTag()} />
-      <CardCarousel
-        data={user?.fields}
-        onActivePage={onChangePage}
-        component={field => <Dashboard {...dash_props(field)} />}
-      />
+      <PullDownRefresh _onEvent={loadUserFromDB}>
+        <Header title={'Dashboard'} pageTag={getPageTag()} />
+        <CardCarousel
+          data={user?.fields}
+          onActivePage={onChangePage}
+          component={field => <Dashboard {...dash_props(field)} />}
+        />
+      </PullDownRefresh>
     </View>
   );
 }
