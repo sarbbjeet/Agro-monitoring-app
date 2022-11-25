@@ -1,4 +1,5 @@
 apply plugin: "com.android.application"
+apply plugin: "com.google.gms.google-services"
 
 import com.android.build.OutputFile
 import org.apache.tools.ant.taskdefs.condition.Os
@@ -139,6 +140,8 @@ android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     defaultConfig {
+         multiDexEnabled true // <-- ADD THIS in the defaultConfig section
+
         applicationId "com.wifi_scanner"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
@@ -252,7 +255,12 @@ android {
     }
 }
 
+
 dependencies {
+     implementation 'androidx.multidex:multidex:2.0.1'  // <-- ADD THIS DEPENDENCY
+    implementation platform('com.google.firebase:firebase-bom:31.1.0')
+    implementation 'com.google.firebase:firebase-analytics'
+
     implementation project(':react-native-wifi-reborn')
     implementation project(':sp-react-native-mqtt')
     implementation fileTree(dir: "libs", include: ["*.jar"])

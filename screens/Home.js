@@ -15,6 +15,7 @@ import {useAuth} from '../context/AuthProvider';
 import {faL} from '@fortawesome/free-solid-svg-icons';
 import CardCarousel from '../components/CardCarousel';
 import PullDownRefresh from '../components/PullDownRefresh';
+import NotificationController from '../firebase/NotificationController';
 
 const broadcastEvent = async data => {
   console.log('listener -->', data);
@@ -46,7 +47,7 @@ export default function Home({navigation}) {
   const {user, loadUserFromDB} = useAuth();
   const {deleteField} = useRequest(); //http request context provider
   const {
-    finalData,
+    allReceived,
     publish_data,
     connectionState: {client, connected},
   } = useMqtt();
@@ -102,13 +103,13 @@ export default function Home({navigation}) {
 
   //to insert into dashboards
   const getSensorValues = ({gateway, node}) => {
-    const matched = finalData.find(
+    const matched = allReceived.find(
       d => d.gateway == gateway && d.node === node,
     );
     return matched?.data;
   };
 
-  //change page
+  //change page event
   const onChangePage = pageData => setPage(pageData);
 
   //get page tag
@@ -122,10 +123,6 @@ export default function Home({navigation}) {
       ref_client.current = client;
     }
   }, [client, connected]);
-
-  useEffect(() => {
-    console.log('finalData->', finalData);
-  }, [finalData]);
 
   useEffect(() => {
     navigation?.setOptions({
@@ -153,6 +150,7 @@ export default function Home({navigation}) {
 
   return (
     <View className="mx-2 mt-6">
+      <NotificationController />
       {/* take confirmation to delete field entry  */}
       <DeleteModel
         visible={!deleteModelState?.hidden}

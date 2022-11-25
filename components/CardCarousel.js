@@ -36,14 +36,13 @@ const cards = [
 export default function CardCarousel({data, component, onActivePage}) {
   const scrollX = React.useRef(new Animated.Value(0)).current;
   const {
-    finalData,
     publish_data,
     connectionState: {client, connected},
   } = useMqtt();
 
   //to insert into dashboards
   const getSensorValues = ({gateway, node}) => {
-    const matched = finalData.find(
+    const matched = allReceived.find(
       d => d.gateway == gateway && d.node === node,
     );
     return matched?.data;

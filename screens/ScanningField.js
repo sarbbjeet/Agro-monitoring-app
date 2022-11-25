@@ -5,7 +5,7 @@ import {useMqtt} from '../context/MQTTProvider';
 import {useAuth} from '../context/AuthProvider';
 
 export default function ScanningField({navigation}) {
-  const {finalData} = useMqtt();
+  const {scanList} = useMqtt();
   const {user} = useAuth();
   console.log('user id ->', user?.id);
 
@@ -17,7 +17,7 @@ export default function ScanningField({navigation}) {
   };
   return (
     <ScrollView contentContainerStyle={{flexGrow: 1}}>
-      {finalData.length == 0 ? (
+      {scanList.length == 0 ? (
         <View className="flex-1 flex-row  justify-center px-4 mt-6">
           <Text
             style={{fontFamily: 'BalooBhai2-Bold'}}
@@ -27,23 +27,15 @@ export default function ScanningField({navigation}) {
         </View>
       ) : (
         <>
-          {finalData.map((item, i) => {
-            const matchedField = user?.fields.find(
-              field =>
-                field.gateway == item?.gateway && field?.node == item?.node,
-            );
-            return (
-              !matchedField && (
-                <ListItem
-                  onPress={() => navigateToSettings(item)}
-                  key={i}
-                  className="mx-1"
-                  gateway={item?.gateway}
-                  node={item?.node}
-                />
-              )
-            );
-          })}
+          {scanList?.map((item, i) => (
+            <ListItem
+              onPress={() => navigateToSettings(item)}
+              key={i}
+              className="mx-1"
+              gateway={item?.gateway}
+              node={item?.node}
+            />
+          ))}
         </>
       )}
     </ScrollView>

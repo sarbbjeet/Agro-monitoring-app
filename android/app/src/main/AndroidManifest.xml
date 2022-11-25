@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
 
+
     <application
       android:name=".MainApplication"
       android:label="@string/app_name"
@@ -28,6 +29,8 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
       </activity>
+
+
 
         <service android:name=".BroadcastHeadless" />
         <receiver

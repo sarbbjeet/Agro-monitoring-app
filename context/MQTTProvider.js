@@ -12,7 +12,8 @@ export default function MQTTProvider({children}) {
     connected: false,
   });
   const [messages, setMessages] = React.useState({});
-  const [finalData, setFinalData] = React.useState([]);
+  const [allReceived, setAllReceived] = React.useState([]);
+  const [scanList, setScanList] = React.useState([]);
   const ref_client = useRef();
   const {user} = useAuth();
   useEffect(() => {
@@ -98,36 +99,47 @@ export default function MQTTProvider({children}) {
     const currentTime = Date.now().toString();
     const timer = setInterval(() => {
       //remove item from array if time difference is greater than 30s
-      if (finalData.length > 0) {
-        const itemsLeft = finalData.filter(
+      if (allReceived.length > 0) {
+        const itemsLeft = allReceived.filter(
           item => Date.now() - item?.time < 30000,
         );
-        setFinalData(itemsLeft);
+        setAllReceived(itemsLeft);
       }
     }, 4000);
     return () => {
       clearInterval(timer);
     };
-  }, [finalData]);
+  }, [allReceived]);
 
   //filter and insert received item to final data array
   useEffect(() => {
     const filter = async () => {
       if (messages?.gateway != undefined && messages?.node) {
-        if (finalData.length > 0) {
-          const filterItems = finalData.filter(
+        if (allReceived.length > 0) {
+          const filterItems = allReceived.filter(
             item =>
               !(
                 item?.gateway == messages?.gateway &&
                 item?.node == messages?.node
               ),
           );
-          setFinalData([...filterItems, messages]);
-        } else setFinalData(currentData => [...currentData, messages]);
+          setAllReceived([...filterItems, messages]);
+        } else setAllReceived(currentData => [...currentData, messages]);
       }
     };
     filter();
   }, [messages]);
+
+  useEffect(() => {
+    setScanList(
+      allReceived?.filter(
+        f =>
+          !user?.fields.find(
+            e => e?.gateway == f?.gateway && e?.node == f?.node,
+          ),
+      ),
+    );
+  }, [allReceived]);
 
   const publish_data = msg => {
     try {
@@ -142,7 +154,8 @@ export default function MQTTProvider({children}) {
     }
   };
   return (
-    <MqttContext.Provider value={{connectionState, finalData, publish_data}}>
+    <MqttContext.Provider
+      value={{connectionState, allReceived, publish_data, scanList}}>
       {children}
     </MqttContext.Provider>
   );

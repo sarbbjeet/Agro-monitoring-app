@@ -2,6 +2,7 @@ package com.wifi_scanner;
 
 import android.app.Application;
 import android.content.Context;
+
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactInstanceManager;
@@ -10,8 +11,11 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.config.ReactFeatureFlags;
 import com.facebook.soloader.SoLoader;
 import com.wifi_scanner.newarchitecture.MainApplicationReactNativeHost;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+//import androidx.multidex.MultiDexApplication; // <-- ADD THIS IMPORT
+
 
 public class MainApplication extends Application implements ReactApplication {
 
