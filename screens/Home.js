@@ -149,8 +149,8 @@ export default function Home({navigation}) {
   }, []);
 
   return (
-    <View className="mx-2 mt-6">
-      <NotificationController />
+    <View className="mx-2 mt-4">
+      {/* <NotificationController /> */}
       {/* take confirmation to delete field entry  */}
       <DeleteModel
         visible={!deleteModelState?.hidden}

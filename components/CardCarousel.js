@@ -52,7 +52,7 @@ export default function CardCarousel({data, component, onActivePage}) {
       horizontal={true}
       decelerationRate={'normal'}
       snapToInterval={ITEM_WIDTH}
-      style={{marginTop: 40, paddingHorizontal: 0}}
+      style={{marginTop: 10, paddingHorizontal: 0}}
       showsHorizontalScrollIndicator={false}
       bounces={false}
       disableIntervalMomentum

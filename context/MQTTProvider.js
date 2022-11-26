@@ -11,7 +11,9 @@ export default function MQTTProvider({children}) {
     client: null,
     connected: false,
   });
+  const [client, setClient] = React.useState(null);
   const [messages, setMessages] = React.useState({});
+  const [reconnect, setReconnect] = React.useState('');
   const [allReceived, setAllReceived] = React.useState([]);
   const [scanList, setScanList] = React.useState([]);
   const ref_client = useRef();
@@ -22,78 +24,144 @@ export default function MQTTProvider({children}) {
     }
   }, [connectionState?.connected]);
 
-  useEffect(() => {
-    const connectToMqtt = () =>
-      MQTT.createClient({
+  const reconnectRequest = async () => {
+    if (user?.id && !connectionState?.connected) {
+      const _client = await MQTT.createClient({
         uri: `mqtt://${REACT_APP_MQTTHOST}:1883`,
-        clientId: 'mqttjs01',
+        clientId: `clientId=${Date.now().toString()}`,
         user: REACT_APP_MQTTUSER,
         pass: REACT_APP_MQTTPASS,
         clean: true,
         auth: true,
-      })
-        .then(_client => {
-          setConnectionState(currentState => ({
-            ...currentState,
-            client: _client,
-          }));
-          _client?.connect();
-          _client?.on('connect', function () {
-            console.log('connected');
-            console.log('user id', user?.id);
-            _client?.subscribe(`/outTopic/${user?.id}`, 0);
-            setConnectionState(currentState => ({
-              ...currentState,
-              connected: true,
-            }));
-          });
-
-          _client?.on('message', async message => {
-            try {
-              const json = await JSON.parse(message?.data);
-              //verify recived data is correct
-              const {gateway, node} = json;
-              if (gateway == undefined || node == undefined)
-                throw new Error('invaild json data received');
-              //enter time stamping with received data
-              json['time'] = Date.now();
-              setMessages(json);
-            } catch (err) {
-              console.log('data error -> ', err.message);
-            }
-          });
-
-          _client?.on('closed', function () {
-            setConnectionState(currentState => ({
-              ...currentState,
-              connected: false,
-            }));
-            _client?.end();
-            console.log('mqtt.event.closed');
-            //reconnect request
-            // _client.connect();
-          });
-          _client?.on('error', function (msg) {
-            setConnectionState(currentState => ({
-              ...currentState,
-              connected: false,
-            }));
-            console.log('mqtt.event.error', msg);
-            //reconnect request
-            //  _client.connect();
-          });
-        })
-        .catch(err => {
-          console.log('new error-->', err);
+      });
+      _client.connect();
+      _client.on('connect', () => {
+        console.log('connected..');
+        _client?.subscribe(`/outTopic/${user?.id}`, 0);
+        setConnectionState({
+          client: _client,
+          connected: true,
         });
+      });
+      _client.on('error', () => {
+        setConnectionState(currentState => ({
+          ...currentState,
+          connected: false,
+        }));
+        _client?.unsubscribe(`/outTopic/${user?.id}`);
+        console.log('connecion error');
+      });
+      _client.on('closed', () => {
+        console.log('conneciton is closed');
+        _client?.unsubscribe(`/outTopic/${user?.id}`);
+        setConnectionState(currentState => ({
+          ...currentState,
+          connected: false,
+        }));
+      });
 
-    // if (connectionState.client == null) {
-    connectToMqtt();
-    // }
-    return () => {
-      connectionState.client?.unsubscribe(`/outTopic/${user?.id}`);
-    };
-  }, [user?.id]);
+      _client?.on('message', async message => {
+        try {
+          const json = await JSON.parse(message?.data);
+          //verify recived data is correct
+          const {gateway, node} = json;
+          if (gateway == undefined || node == undefined)
+            throw new Error('invaild json data received');
+          //enter time stamping with received data
+          json['time'] = Date.now();
+          setMessages(json);
+        } catch (err) {
+          console.log('data error -> ', err.message);
+        }
+      });
+    }
+  };
+
+  useEffect(() => {
+    reconnectRequest();
+  }, [reconnect]);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (!client?.connected)
+        //just randomly change the reconnect string value to enable to run loop again
+        setReconnect(Date.now().toString());
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [client]);
+
+  // useEffect(() => {
+  //   const connectToMqtt = () =>
+  //     MQTT.createClient({
+  //       uri: `mqtt://${REACT_APP_MQTTHOST}:1883`,
+  //       clientId: 'mqttjs01',
+  //       user: REACT_APP_MQTTUSER,
+  //       pass: REACT_APP_MQTTPASS,
+  //       clean: true,
+  //       auth: true,
+  //     })
+  //       .then(_client => {
+  //         setConnectionState(currentState => ({
+  //           ...currentState,
+  //           client: _client,
+  //         }));
+  //         _client?.connect();
+  //         _client?.on('connect', function () {
+  //           console.log('connected');
+  //           console.log('user id', user?.id);
+  //           _client?.subscribe(`/outTopic/${user?.id}`, 0);
+  //           setConnectionState(currentState => ({
+  //             ...currentState,
+  //             connected: true,
+  //           }));
+  //         });
+
+  //         _client?.on('message', async message => {
+  //           try {
+  //             const json = await JSON.parse(message?.data);
+  //             //verify recived data is correct
+  //             const {gateway, node} = json;
+  //             if (gateway == undefined || node == undefined)
+  //               throw new Error('invaild json data received');
+  //             //enter time stamping with received data
+  //             json['time'] = Date.now();
+  //             setMessages(json);
+  //           } catch (err) {
+  //             console.log('data error -> ', err.message);
+  //           }
+  //         });
+
+  //         _client?.on('closed', function () {
+  //           setConnectionState(currentState => ({
+  //             ...currentState,
+  //             connected: false,
+  //           }));
+  //           _client?.end();
+  //           console.log('mqtt.event.closed');
+  //           //reconnect request
+  //           // _client.connect();
+  //         });
+  //         _client?.on('error', function (msg) {
+  //           setConnectionState(currentState => ({
+  //             ...currentState,
+  //             connected: false,
+  //           }));
+  //           console.log('mqtt.event.error', msg);
+  //           //reconnect request
+  //           //  _client.connect();
+  //         });
+  //       })
+  //       .catch(err => {
+  //         console.log('new error-->', err);
+  //       });
+
+  //   // if (connectionState.client == null) {
+  //   connectToMqtt();
+  //   // }
+  //   return () => {
+  //     connectionState.client?.unsubscribe(`/outTopic/${user?.id}`);
+  //   };
+  // }, [user?.id]);
   //create timer
   useEffect(() => {
     const currentTime = Date.now().toString();
