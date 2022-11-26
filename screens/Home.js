@@ -15,7 +15,6 @@ import {useAuth} from '../context/AuthProvider';
 import {faL} from '@fortawesome/free-solid-svg-icons';
 import CardCarousel from '../components/CardCarousel';
 import PullDownRefresh from '../components/PullDownRefresh';
-import NotificationController from '../firebase/NotificationController';
 
 const broadcastEvent = async data => {
   console.log('listener -->', data);
@@ -150,7 +149,6 @@ export default function Home({navigation}) {
 
   return (
     <View className="mx-2 mt-4">
-      {/* <NotificationController /> */}
       {/* take confirmation to delete field entry  */}
       <DeleteModel
         visible={!deleteModelState?.hidden}

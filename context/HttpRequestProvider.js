@@ -4,7 +4,19 @@ import {REACT_APP_HOST} from '@env';
 import axios from 'axios';
 import {useAuth} from './AuthProvider';
 const fieldUrl = `${REACT_APP_HOST}/api/user/field`;
+const fcmUrl = `${REACT_APP_HOST}/api/user/fcmtoken`;
 
+const errorTail = (error, _err) => {
+  if (error)
+    return {
+      error: true,
+      msg: error,
+    };
+  return {
+    error: true,
+    msg: _err.message,
+  };
+};
 export default function HttpRequestProvider({children}) {
   const {token, isAuthenticated, user} = useAuth();
 
@@ -23,21 +35,13 @@ export default function HttpRequestProvider({children}) {
           headers: {Authorization: `Bearer ${token}`},
         },
       );
+
       return {
         error: false,
         msg: 'successfully operation performed',
       };
     } catch (_err) {
-      const error = _err?.response?.data?.error;
-      if (error)
-        return {
-          error: true,
-          msg: error,
-        };
-      return {
-        error: true,
-        msg: _err.message,
-      };
+      return errorTail(_err?.response?.data?.error, _err);
     }
   };
   const deleteField = async fieldID => {
@@ -54,21 +58,31 @@ export default function HttpRequestProvider({children}) {
         msg: 'Delete field item successfully',
       };
     } catch (err) {
-      const error = err?.response?.data?.error;
-      console.log('errror', error);
-      if (error)
-        return {
-          error: true,
-          msg: error,
-        };
-      return {
-        error: true,
-        msg: err?.message,
-      };
+      return errorTail(err?.response?.data?.error, err);
     }
   };
+
+  const updateFcmToken = async fcmtoken => {
+    //apply axios request here
+    try {
+      await axios(fcmUrl, {
+        method: 'POST',
+        data: {token: fcmtoken},
+        headers: {Authorization: `Bearer ${token}`},
+      });
+      return {
+        error: false,
+        msg: 'token added successfully',
+      };
+    } catch (err) {
+      console.log('token err..', err?.response?.data?.error, err);
+      return errorTail(err?.response?.data?.error, err);
+    }
+  };
+
   return (
-    <HttpContext.Provider value={{deleteField, addOrUpdateField}}>
+    <HttpContext.Provider
+      value={{deleteField, addOrUpdateField, updateFcmToken}}>
       {children}
     </HttpContext.Provider>
   );

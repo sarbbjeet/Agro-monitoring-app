@@ -7,6 +7,7 @@ import WIFIGPSContext from './context/WIFIGPSContext';
 import MQTTProvider from './context/MQTTProvider';
 import AuthProvider from './context/AuthProvider';
 import HttpRequestProvider from './context/HttpRequestProvider';
+import NotificationController from './firebase/NotificationController';
 
 // WifiManager.connectToProtectedSSID(ssid, password, isWep).then(
 //   () => {
@@ -33,10 +34,12 @@ export default function App() {
     <AuthProvider>
       <MQTTProvider>
         <HttpRequestProvider>
-          <WIFIGPSContext>
-            <StatusBar backgroundColor={colors.primary} />
-            <RootNavigationSatck />
-          </WIFIGPSContext>
+          <NotificationController>
+            <WIFIGPSContext>
+              <StatusBar backgroundColor={colors.primary} />
+              <RootNavigationSatck />
+            </WIFIGPSContext>
+          </NotificationController>
         </HttpRequestProvider>
       </MQTTProvider>
     </AuthProvider>
