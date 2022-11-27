@@ -20,6 +20,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import {faContactBook} from '@fortawesome/free-regular-svg-icons';
 import {useAuth} from '../context/AuthProvider';
+import {useMqtt} from '../context/MQTTProvider';
 const farmer = {
   name: 'sarbjit singh ',
   id: 'a9902',
@@ -60,7 +61,17 @@ const AppButton = ({title = 'button', onPress, icon}) => {
 };
 
 export default function CustomDrawer(props) {
-  const {logout} = useAuth();
+  const {logout, user} = useAuth();
+  const {clientRef, connectionState, setConnectionState} = useMqtt();
+
+  const logoutEvent = () => {
+    logout();
+    //unsubscribe the topic
+    connectionState?.client?.unsubscribe(`/outTopic/${user?.id}`);
+    clientRef?.current?.unsubscribe(`/outTopic/${user?.id}`);
+    clientRef?.current?.end(true); //force
+    setConnectionState(currentState => ({...currentState, connected: false}));
+  };
   return (
     <View style={{flex: 1}}>
       <View
@@ -115,7 +126,7 @@ export default function CustomDrawer(props) {
           </Item>
           <View style={styles.divider} />
 
-          <AppButton title="Logout" icon="logout" onPress={logout} />
+          <AppButton title="Logout" icon="logout" onPress={logoutEvent} />
         </ScrollView>
       </View>
       <View

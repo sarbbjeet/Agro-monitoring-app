@@ -7,7 +7,6 @@ import {useAuth} from '../context/AuthProvider';
 export default function ScanningField({navigation}) {
   const {scanList} = useMqtt();
   const {user} = useAuth();
-  console.log('user id ->', user?.id);
 
   const navigateToSettings = item => {
     navigation.navigate('dEditField', {
