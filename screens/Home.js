@@ -114,6 +114,7 @@ export default function Home({navigation}) {
   //get page tag
   const getPageTag = () => {
     const {currentPage, totalPages} = page;
+    if (totalPages <= 1) return '';
     return `${currentPage + 1}/${totalPages}`;
   };
 

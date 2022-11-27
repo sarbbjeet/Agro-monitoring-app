@@ -93,7 +93,7 @@ export default function CustomDrawer(props) {
             ...styles.text,
             ...styles.headerName,
           }}>
-          {farmer.name}
+          {`${user?.name} ${user?.last_name ? user?.last_name : ''}`}
         </Text>
       </View>
       <View style={{flex: 7}}>
