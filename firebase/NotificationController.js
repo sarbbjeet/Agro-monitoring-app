@@ -1,22 +1,16 @@
 import {View, Text, ToastAndroid} from 'react-native';
-import React, {useEffect} from 'react';
+import React, {createContext, useContext, useEffect} from 'react';
 import messaging from '@react-native-firebase/messaging';
 import PushNotification from 'react-native-push-notification';
 import notifee from '@notifee/react-native';
 import {useRequest} from '../context/HttpRequestProvider';
 import {useAuth} from '../context/AuthProvider';
 
-const showToastWithGravity = () => {
-  ToastAndroid.showWithGravity(
-    'All Your Base Are Belong To Us',
-    ToastAndroid.SHORT,
-    ToastAndroid.CENTER,
-  );
-};
+const FcmContext = createContext({});
 
 const showToastWithGravityAndOffset = ({title, body}) => {
   ToastAndroid.showWithGravityAndOffset(
-    `Location -> ${body} (${title})`,
+    `${body}  (${title})`,
     ToastAndroid.LONG,
     ToastAndroid.BOTTOM,
     25,
@@ -57,13 +51,11 @@ export default function NotificationController({children}) {
     });
   }
 
-  useEffect(() => {
-    const getToken = async () => {
-      const fsctoken = await messaging().getToken();
-      if (token) await updateFcmToken(fsctoken);
-    };
-    getToken();
-  }, [user, token]);
+  //get fcmtoken
+  const getFcmToken = async () => {
+    const fcm = await messaging().getToken();
+    return fcm;
+  };
 
   useEffect(() => {
     //get notification when app on the View(open)
@@ -83,5 +75,9 @@ export default function NotificationController({children}) {
     return unsubscribe;
   }, []);
 
-  return <>{children}</>;
+  return (
+    <FcmContext.Provider value={{getFcmToken}}>{children}</FcmContext.Provider>
+  );
 }
+
+export const useFcmNotification = () => useContext(FcmContext);

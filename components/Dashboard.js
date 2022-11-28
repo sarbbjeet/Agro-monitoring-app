@@ -34,8 +34,23 @@ export default function Dashboard({
 }) {
   return (
     <>
+      <View className="absolute z-20 top-1 left-1 flex flex-row">
+        <TouchableOpacity
+          onPress={editBtn}
+          className="z-40 w-10 h-10 flex justify-center items-center bg-gray-700 rounded-l-md">
+          <FontAwesomeIcon icon={faEdit} size={22} color="white" />
+        </TouchableOpacity>
+        <View style={{backgroundColor: colors?.p3}} className="w-1" />
+        <TouchableOpacity
+          onPress={deleteBtn}
+          className="w-10 h-10 flex justify-center items-center bg-gray-700 rounded-r-md">
+          <FontAwesomeIcon icon={faTrash} size={22} color="white" />
+        </TouchableOpacity>
+      </View>
       {!isActive && (
-        <View className="absolute z-20 flex w-[96%] justify-center items-center h-full bg-[#0f0d0c6f] rounded-t-2xl ">
+        <View
+          style={{zIndex: 1}}
+          className="absolute flex w-[96%] justify-center items-center h-full bg-[#0f0d0c6f] rounded-t-2xl ">
           <ActivityIndicator size="large" color="#00ff00" className="-top-20" />
         </View>
       )}
@@ -46,19 +61,6 @@ export default function Dashboard({
             overflow: 'scroll',
           }}>
           <View className="relative">
-            <View className="absolute z-30 top-1 left-1 flex flex-row ">
-              <TouchableOpacity
-                onPress={editBtn}
-                className="w-10 h-10 flex justify-center items-center bg-gray-700 rounded-l-md">
-                <FontAwesomeIcon icon={faEdit} size={22} color="white" />
-              </TouchableOpacity>
-              <View style={{backgroundColor: colors?.p3}} className="w-1" />
-              <TouchableOpacity
-                onPress={deleteBtn}
-                className="w-10 h-10 flex justify-center items-center bg-gray-700 rounded-r-md">
-                <FontAwesomeIcon icon={faTrash} size={22} color="white" />
-              </TouchableOpacity>
-            </View>
             <Image
               style={styles.bannerImage}
               className="rounded-t-xl"

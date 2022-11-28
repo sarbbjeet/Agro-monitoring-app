@@ -36,8 +36,10 @@ export default function AuthProvider({children}) {
           Authorization: `Bearer ${token}`,
         },
       });
-      if (user?.data) setUser(user?.data);
-      setToken(token);
+      if (user?.data) {
+        setUser(user?.data);
+        setToken(token);
+      }
     }
     setLoading(false);
   };
@@ -72,7 +74,9 @@ export default function AuthProvider({children}) {
           Authorization: `Bearer ${token?.data}`,
         },
       });
-      if (user?.data) setUser(user?.data);
+      if (user?.data) {
+        setUser(user?.data);
+      }
       setToken(token?.data);
       return {error: false, msg: 'successfully login'};
     } catch (err) {
@@ -87,8 +91,10 @@ export default function AuthProvider({children}) {
     try {
       await AsyncStorage.removeItem('@authToken');
       setUser(null);
+      console.log('siccessfull delete token from storagfe ...');
       return 'successfully removed logout';
     } catch (err) {
+      console.log('error to delete tokn from storage', err?.message);
       return null;
     }
 

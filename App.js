@@ -33,14 +33,14 @@ export default function App() {
   return (
     <AuthProvider>
       <MQTTProvider>
-        <HttpRequestProvider>
-          <NotificationController>
+        <NotificationController>
+          <HttpRequestProvider>
             <WIFIGPSContext>
               <StatusBar backgroundColor={colors.primary} />
               <RootNavigationSatck />
             </WIFIGPSContext>
-          </NotificationController>
-        </HttpRequestProvider>
+          </HttpRequestProvider>
+        </NotificationController>
       </MQTTProvider>
     </AuthProvider>
   );

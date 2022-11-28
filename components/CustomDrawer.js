@@ -21,6 +21,8 @@ import {
 import {faContactBook} from '@fortawesome/free-regular-svg-icons';
 import {useAuth} from '../context/AuthProvider';
 import {useMqtt} from '../context/MQTTProvider';
+import {useFcmNotification} from '../firebase/NotificationController';
+import {useRequest} from '../context/HttpRequestProvider';
 const farmer = {
   name: 'sarbjit singh ',
   id: 'a9902',
@@ -63,6 +65,7 @@ const AppButton = ({title = 'button', onPress, icon}) => {
 export default function CustomDrawer(props) {
   const {logout, user} = useAuth();
   const {clientRef, connectionState, setConnectionState} = useMqtt();
+  const {deleteFcmToken} = useRequest();
 
   const logoutEvent = () => {
     logout();
@@ -71,6 +74,9 @@ export default function CustomDrawer(props) {
     clientRef?.current?.unsubscribe(`/outTopic/${user?.id}`);
     clientRef?.current?.end(true); //force
     setConnectionState(currentState => ({...currentState, connected: false}));
+
+    //delete fcmtoken from the database
+    deleteFcmToken();
   };
   return (
     <View style={{flex: 1}}>

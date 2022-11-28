@@ -3,6 +3,7 @@ const HttpContext = createContext({});
 import {REACT_APP_HOST} from '@env';
 import axios from 'axios';
 import {useAuth} from './AuthProvider';
+import {useFcmNotification} from '../firebase/NotificationController';
 const fieldUrl = `${REACT_APP_HOST}/api/user/field`;
 const fcmUrl = `${REACT_APP_HOST}/api/user/fcmtoken`;
 
@@ -19,6 +20,7 @@ const errorTail = (error, _err) => {
 };
 export default function HttpRequestProvider({children}) {
   const {token, isAuthenticated, user} = useAuth();
+  const {getFcmToken} = useFcmNotification();
 
   const addOrUpdateField = async ({newField, update = false}) => {
     try {
@@ -62,27 +64,50 @@ export default function HttpRequestProvider({children}) {
     }
   };
 
-  const updateFcmToken = async fcmtoken => {
+  const deleteFcmToken = async () => {
+    const fcmtoken = await getFcmToken();
+    if (fcmtoken && token) {
+      try {
+        await axios.delete(`${fcmUrl}?fcmtoken=${fcmtoken}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        return {
+          error: false,
+          msg: 'Delete fcm token successfully',
+        };
+      } catch (err) {
+        return errorTail(err?.response?.data?.error, err);
+      }
+    }
+  };
+
+  //firebase notication just insert token to the server
+  const updateFcmToken = async () => {
     //apply axios request here
-    try {
-      await axios(fcmUrl, {
-        method: 'POST',
-        data: {token: fcmtoken},
-        headers: {Authorization: `Bearer ${token}`},
-      });
-      return {
-        error: false,
-        msg: 'token added successfully',
-      };
-    } catch (err) {
-      console.log('token err..', err?.response?.data?.error, err);
-      return errorTail(err?.response?.data?.error, err);
+    const fcmtoken = await getFcmToken();
+    if (fcmtoken && token) {
+      try {
+        await axios(fcmUrl, {
+          method: 'POST',
+          data: {token: fcmtoken},
+          headers: {Authorization: `Bearer ${token}`},
+        });
+        return {
+          error: false,
+          msg: 'token added successfully',
+        };
+      } catch (err) {
+        console.log('token err..', err?.response?.data?.error, err);
+        return errorTail(err?.response?.data?.error, err);
+      }
     }
   };
 
   return (
     <HttpContext.Provider
-      value={{deleteField, addOrUpdateField, updateFcmToken}}>
+      value={{deleteField, addOrUpdateField, updateFcmToken, deleteFcmToken}}>
       {children}
     </HttpContext.Provider>
   );

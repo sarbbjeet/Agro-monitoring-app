@@ -1,5 +1,5 @@
 import {View, Text, Image} from 'react-native';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {navheaderFont} from '../constants/theme';
 
 export default function Splash() {

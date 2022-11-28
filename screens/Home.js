@@ -43,8 +43,8 @@ export default function Home({navigation}) {
   };
 
   const [deleteModelState, setDeleteModelState] = useState(initialModelValues);
-  const {user, loadUserFromDB} = useAuth();
-  const {deleteField} = useRequest(); //http request context provider
+  const {user, loadUserFromDB, isAuthenticated, token} = useAuth();
+  const {deleteField, updateFcmToken} = useRequest(); //http request context provider
   const {
     allReceived,
     publish_data,
@@ -141,6 +141,12 @@ export default function Home({navigation}) {
       ),
     });
   }, [navigation]);
+
+  //update FCM token for use login or logout
+  useEffect(() => {
+    console.log('tcm token ............');
+    updateFcmToken();
+  }, [isAuthenticated, token, user]);
   useEffect(() => {
     if (!headless) {
       setHeadless(true);
