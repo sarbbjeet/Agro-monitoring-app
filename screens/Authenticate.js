@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
   },
   fontHeader: {
     fontFamily: 'BalooBhai2-SemiBold',
-    fontSize: moderateScale(18),
+    fontSize: moderateScale(16),
   },
   wrapper: {
     flex: 3,

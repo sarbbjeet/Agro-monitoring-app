@@ -1,9 +1,8 @@
 apply plugin: "com.android.application"
 apply plugin: "com.google.gms.google-services"
 
-import com.android.build.OutputFile
-import org.apache.tools.ant.taskdefs.condition.Os
 
+import com.android.build.OutputFile
 /**
  * The react.gradle file registers a task for each build variant (e.g. bundleDebugJsAndAssets
  * and bundleReleaseJsAndAssets).
@@ -142,11 +141,11 @@ android {
     defaultConfig {
          multiDexEnabled true // <-- ADD THIS in the defaultConfig section
 
-        applicationId "com.wifi_scanner"
+        applicationId "com.app.agromonitoring"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.0.1"
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
 
         if (isNewArchitectureEnabled()) {
@@ -218,6 +217,14 @@ android {
         }
     }
     signingConfigs {
+release{
+    if(project.hasProperty('MYAPP_UPLOAD_STORE_FILE')){
+        storeFile file(MYAPP_UPLOAD_STORE_FILE)
+        storePassword MYAPP_UPLOAD_STORE_PASSWORD
+        keyAlias MYAPP_UPLOAD_KEY_ALIAS
+        keyPassword MYAPP_UPLOAD_KEY_PASSWORD
+    }
+}
         debug {
             storeFile file('debug.keystore')
             storePassword 'android'
@@ -232,7 +239,7 @@ android {
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
@@ -257,6 +264,8 @@ android {
 
 
 dependencies {
+   implementation project(':react-native-splash-screen') //splash screen dependency
+
      implementation 'androidx.multidex:multidex:2.0.1'  // <-- ADD THIS DEPENDENCY
     implementation platform('com.google.firebase:firebase-bom:31.1.0')
     implementation 'com.google.firebase:firebase-analytics'
@@ -269,6 +278,9 @@ dependencies {
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'com.google.android.material:material:1.4.+'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.fbjni'

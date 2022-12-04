@@ -20,10 +20,12 @@ import {UserContext} from '../context/WIFIGPSContext';
 import GpsSelectModel from '../model/GpsModel';
 import WifiGPSEnable from '../components/WifiGPSEnable';
 import axios from 'axios';
+import {useAuth} from '../context/AuthProvider';
 // import DeviceInfo from 'react-native-device-info';
 
 export default function Settings({navigation}) {
   const [wifiList, setWifiList] = useState([]);
+  const {user} = useAuth();
   const [startRequest, setStartRequest] = useState(false);
   const [openModel, setOpenModel] = useState(false);
   const [refreshing, setRefreshing] = React.useState(false);
@@ -132,7 +134,11 @@ export default function Settings({navigation}) {
         <WifiScanning
           wifiList={wifiList}
           clickEvent={index => {
-            setSelectedWifi({...selectedWifi, ssid: wifiList[index]?.SSID});
+            setSelectedWifi({
+              ...selectedWifi,
+              ssid: wifiList[index]?.SSID,
+              user_id: user?.id,
+            });
             console.log('click  me ');
             setOpenModel(true);
           }}

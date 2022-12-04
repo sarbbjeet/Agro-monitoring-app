@@ -1,7 +1,12 @@
-rootProject.name = 'wifi_scanner'
+rootProject.name = 'AgroMonitoring'
 apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
 include ':sp-react-native-mqtt'
 project(':sp-react-native-mqtt').projectDir = new File(rootProject.projectDir,  '../node_modules/sp-react-native-mqtt/android')
+
+//splash screen
+include ':react-native-splash-screen'
+project(':react-native-splash-screen').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-splash-screen/android')
+
 
 
 include ':app'

@@ -1,8 +1,12 @@
 import {View, Text, Image} from 'react-native';
 import React, {useEffect} from 'react';
 import {navheaderFont} from '../constants/theme';
+import SplashScreen from 'react-native-splash-screen';
 
 export default function Splash() {
+  useEffect(() => {
+    SplashScreen.hide();
+  }, []);
   return (
     <View
       className="flex-1 flex justify-center items-center"

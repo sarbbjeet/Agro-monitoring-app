@@ -1,6 +1,6 @@
 {
-    "name": "wifi_scanner",
-    "displayName": "wifi_scanner",
+    "name": "AgroMonitoring",
+    "displayName": "Agro Monitoring",
     "expo": {
         "plugins": ["react-native-wifi-reborn"]
     }
