@@ -17,7 +17,7 @@ export default function WIFIGPSContext({children}) {
     setContext(currentContext => ({...currentContext, ...contextUpdates}));
 
   const broadcastEvent = async ({gps, wifi}) => {
-    console.log(context);
+    console.log('bbb', context);
     if (gps == 'on') updateContext({gps: true});
     else if (gps == 'off') updateContext({gps: false});
     if (wifi == 'on') updateContext({wifi: true});

@@ -3,11 +3,12 @@ import React from 'react';
 import WifiManager from 'react-native-wifi-reborn';
 import RootNavigationSatck from './navigator/RootNavigationSatck';
 import {colors} from './constants/colors';
-import WIFIGPSContext from './context/WIFIGPSContext';
 import MQTTProvider from './context/MQTTProvider';
 import AuthProvider from './context/AuthProvider';
 import HttpRequestProvider from './context/HttpRequestProvider';
 import NotificationController from './firebase/NotificationController';
+import WGProvider from './context/WGProvider';
+import WIFIGPSContext from './context/WIFIGPSContext';
 
 // WifiManager.connectToProtectedSSID(ssid, password, isWep).then(
 //   () => {
@@ -35,10 +36,10 @@ export default function App() {
       <MQTTProvider>
         <NotificationController>
           <HttpRequestProvider>
-            <WIFIGPSContext>
+            <WGProvider>
               <StatusBar backgroundColor={colors.primary} />
               <RootNavigationSatck />
-            </WIFIGPSContext>
+            </WGProvider>
           </HttpRequestProvider>
         </NotificationController>
       </MQTTProvider>

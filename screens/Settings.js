@@ -21,11 +21,13 @@ import GpsSelectModel from '../model/GpsModel';
 import WifiGPSEnable from '../components/WifiGPSEnable';
 import axios from 'axios';
 import {useAuth} from '../context/AuthProvider';
+import WGProvider, {useWG} from '../context/WGProvider';
 // import DeviceInfo from 'react-native-device-info';
 
 export default function Settings({navigation}) {
   const [wifiList, setWifiList] = useState([]);
   const {user} = useAuth();
+  const {loadCurrentSSID} = useWG();
   const [startRequest, setStartRequest] = useState(false);
   const [openModel, setOpenModel] = useState(false);
   const [refreshing, setRefreshing] = React.useState(false);
@@ -125,37 +127,38 @@ export default function Settings({navigation}) {
   }, []);
 
   return (
-    <WifiGPSEnable>
-      <ScrollView
-        contentContainerStyle={{flexGrow: 1}}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }>
-        <WifiScanning
-          wifiList={wifiList}
-          clickEvent={index => {
-            setSelectedWifi({
-              ...selectedWifi,
-              ssid: wifiList[index]?.SSID,
-              user_id: user?.id,
-            });
-            console.log('click  me ');
-            setOpenModel(true);
-          }}
-        />
-        {openModel && (
-          <SSIDAuthenticateModel
-            wifi={selectedWifi}
-            okEvent={pass => {
-              setSelectedWifi({...selectedWifi, pass});
-              //http post request
-              setStartRequest(true);
-              setOpenModel(false);
+    <WGProvider>
+      <WifiGPSEnable>
+        <ScrollView
+          contentContainerStyle={{flexGrow: 1}}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }>
+          <WifiScanning
+            wifiList={wifiList}
+            clickEvent={index => {
+              setSelectedWifi({
+                ...selectedWifi,
+                ssid: wifiList[index]?.SSID,
+                user_id: user?.id,
+              });
+              setOpenModel(true);
             }}
-            cancelEvent={() => setOpenModel(false)}
           />
-        )}
-      </ScrollView>
-    </WifiGPSEnable>
+          {openModel && (
+            <SSIDAuthenticateModel
+              wifi={selectedWifi}
+              okEvent={pass => {
+                setSelectedWifi({...selectedWifi, pass});
+                //http post request
+                setStartRequest(true);
+                setOpenModel(false);
+              }}
+              cancelEvent={() => setOpenModel(false)}
+            />
+          )}
+        </ScrollView>
+      </WifiGPSEnable>
+    </WGProvider>
   );
 }

@@ -1,10 +1,9 @@
 import {View, Text, Linking, Button} from 'react-native';
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import WifiManager from 'react-native-wifi-reborn';
-import {UserContext} from '../context/WIFIGPSContext';
-import GpsSelectModel from '../model/GpsModel';
 import GpsModel from '../model/GpsModel';
 import WIFIModel from '../model/WIFIModel';
+import {useWG} from '../context/WGProvider';
 
 //open location turn on/off selection option
 const locationSetting = () =>
@@ -15,37 +14,35 @@ const wifiSetting = () => Linking.sendIntent('android.settings.WIFI_SETTINGS');
 const appSettings = () => Linking.openSettings();
 
 export default function WifiGPSEnable({children, gatewaySSID = 'agri_wifi'}) {
-  const {wifi, gps} = useContext(UserContext); //get wifi and gps state of the device
-  const [ssid, setSSID] = useState('');
-  const loadCurrentSSID = async () => {
-    WifiManager.getCurrentWifiSSID()
-      .then(ssid => {
-        setSSID(ssid);
-      })
-      .catch(() => {
-        setSSID('');
-      });
-  };
+  const {
+    settings: {gps, wifi},
+    loadCurrentSSID,
+    connectedSSID,
+  } = useWG(); //get wifi and gps state of the device
 
   useEffect(() => {
-    loadCurrentSSID();
-  }, []);
+    console.log('wifi', wifi);
+    console.log('gps', gps);
+  }, [wifi, gps]);
+
   return (
     <View className="flex-1">
       {!gps && <GpsModel ok={locationSetting} />}
       {gps && !wifi && <WIFIModel ok={wifiSetting} />}
-      {gps && wifi && ssid != gatewaySSID && (
+      {gps && wifi && connectedSSID != gatewaySSID && (
         <View className="flex px-2 pt-2">
-          <Text className="text-gray-500">
-            use the
-            <Text className="font-bold"> {gatewaySSID} </Text>access point to
-            connect to wifi. after joining, please click the link below to load
-            the list of SSIDs.
+          <Text className="text-gray-500 mb-2">
+            Connect your device with
+            <Text className="font-bold"> {gatewaySSID} </Text>access point.
+            Please click on the below button after connected with mentioned
+            access point.
           </Text>
-          <Button title="load SSID" onPress={() => loadCurrentSSID()}></Button>
+          <Button
+            title="load SSID names list"
+            onPress={() => loadCurrentSSID()}></Button>
         </View>
       )}
-      {gps && wifi && ssid == gatewaySSID && <>{children}</>}
+      {gps && wifi && connectedSSID == gatewaySSID && <>{children}</>}
     </View>
   );
 }

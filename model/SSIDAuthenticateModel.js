@@ -4,6 +4,7 @@ import {colors} from '../constants/colors';
 import {moderateScale} from '../Scaling';
 import {Button} from 'react-native-elements';
 import Btn from '../components/Btn';
+import {useWG} from '../context/WGProvider';
 
 export default function SSIDAuthenticateModel({
   wifi = {ssid: 'nokia'},
@@ -11,6 +12,7 @@ export default function SSIDAuthenticateModel({
   okEvent,
 }) {
   const [pass, setPass] = useState('');
+  const {loadCurrentSSID} = useWG();
   return (
     <View className="absolute flex w-full bg-transparent pt-20 items-center z-10">
       <View style={styles.container} className="rounded-md">
@@ -35,7 +37,14 @@ export default function SSIDAuthenticateModel({
         </View>
         <View style={styles.btnGroup}>
           <Btn onClick={cancelEvent}>cancel</Btn>
-          <Btn onClick={() => okEvent(pass)}>ok</Btn>
+          <Btn
+            onClick={() => {
+              okEvent(pass);
+              //load current connected ssid
+              // loadCurrentSSID();
+            }}>
+            ok
+          </Btn>
         </View>
       </View>
     </View>
