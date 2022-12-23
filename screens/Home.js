@@ -83,7 +83,7 @@ export default function Home({navigation}) {
         gateway: f?.gateway,
         node: f?.node,
         data: {
-          relay0: state,
+          relay0: state ? 1 : 0,
         },
       }),
   });
