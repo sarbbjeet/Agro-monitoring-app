@@ -25,7 +25,7 @@ export default function Authenticate() {
           style={{width: 100, height: 100}}
         />
         <Text className="text-white text-lg font-semibold mt-2">
-          Agriculture Monitoring Stystem
+          Agriculture Monitoring System
         </Text>
       </View>
       <View style={styles.wrapper} className=" bg-white rounded-t-3xl">
