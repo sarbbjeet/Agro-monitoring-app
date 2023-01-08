@@ -1,8 +1,8 @@
 ## Agriculture Monitoring System App
 An app helps to display agricultural data such as temperature, moisture, and pH level in the form of dashboards. To begin, hardware units must be configured in order for sensor results to be shown on app dashboards. This project is a consolidated version of these components, the following four repositories must be set up in order to test this application.
-1. LoRa Node Module  https://github.com/sarbbjeet/arduino_sensors_node 
-2. LoRa Gateway Module https://github.com/sarbbjeet/LoRa-gateway-
-3. Cloud Server https://github.com/sarbbjeet/agri-server
+1. LoRa Node Module  https://github.com/sarbbjeet/LoRa-Node-Module 
+2. LoRa Gateway Module https://github.com/sarbbjeet/LoRa-Gateway-Module
+3. Cloud Server https://github.com/sarbbjeet/Agro-server
 4. Mobile App https://github.com/sarbbjeet/Agro-monitoring-app
 
 
