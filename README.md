@@ -15,6 +15,15 @@ a rounded progress bar to display temperature and moisture data, and a button to
    </div>
 
 
+## Architecture of the project 
+The image below depicts the overall architecture of the project, which includes sensor units, a gateway module, a cloud server, and a front user interface application.
+This project features LoRa communication, MQTT client/broker interaction, and database queries communicating with JSON API.
+
+
+<img width="716" alt="Screenshot 2023-01-04 at 10 40 32" src="https://user-images.githubusercontent.com/9445093/211218105-fccd1078-afa1-4744-a16c-c1dd53dca03f.png">
+
+
+
 ## Ready to use
 This app is available on the Google Play store; please follow the link below to get it.
 
