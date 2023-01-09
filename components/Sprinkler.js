@@ -18,7 +18,7 @@ export default function Sprinkler({
   //   const [pStatus, setStatus] = useState(powerStatus);
   return (
     <View className="w-40 shadow pb-2" style={{elevation: 5}}>
-      <Text style={styles.title}>Sprinker</Text>
+      <Text style={styles.title}>Sprinkler</Text>
       <TouchableOpacity
         onPress={onClick}
         disabled={disabled}

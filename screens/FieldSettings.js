@@ -16,12 +16,14 @@ import axios from 'axios';
 import {useAuth} from '../context/AuthProvider';
 import {REACT_APP_HOST} from '@env';
 import {useRequest} from '../context/HttpRequestProvider';
+import {fieldTypes} from '../constants/fieldTypes';
 const url = `${REACT_APP_HOST}/api/user/field`;
-const dropdown = [
-  {label: 'Potato Field', value: 0},
-  {label: 'Wheat Field', value: 1},
-  {label: 'Onion Field', value: 2},
-];
+
+// const dropdown = [
+//   {label: 'Potato Field', value: 0},
+//   {label: 'Wheat Field', value: 1},
+//   {label: 'Onion Field', value: 2},
+// ];
 
 export default function FieldSettings({route, navigation}) {
   const {item, update = false} = route.params;
@@ -99,7 +101,7 @@ export default function FieldSettings({route, navigation}) {
             inputSearchStyle={styles.inputSearchStyle}
             iconStyle={styles.iconStyle}
             style={styles.dropdown}
-            data={dropdown}
+            data={fieldTypes}
             labelField="label"
             valueField="value"
             value={state?.field_type_id}

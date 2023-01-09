@@ -64,7 +64,7 @@ export default function Dashboard({
             <Image
               style={styles.bannerImage}
               className="rounded-t-xl"
-              source={fieldTypes?.find(field => field.id == fId)?.image}
+              source={fieldTypes?.find(field => field.value == fId)?.image}
             />
           </View>
           {/* body */}
@@ -72,7 +72,7 @@ export default function Dashboard({
             {/* header text */}
             <View className="mt-3">
               <Text style={styles.headerText}>
-                {fieldTypes.find(field => field.id == fId)?.name}
+                {fieldTypes.find(field => field.value == fId)?.label}
               </Text>
               <Text style={styles.subHeaderText}>
                 {' '}
@@ -101,7 +101,7 @@ export default function Dashboard({
               />
               {moist_auto && (
                 <Text className="mt-2 ml-1" style={styles.text}>
-                  (un-clickable)
+                  (auto-mode)
                 </Text>
               )}
             </View>
